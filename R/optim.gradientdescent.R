@@ -1,6 +1,16 @@
-library(numDeriv) #Library used for gradient calculation
-
-grad.descent = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01){
+#' Optimize mathematical function using gradient descent
+#'
+#' This functions uses the gradient descent algorithm to find the minimum of a
+#' (multi-) dimensional mathematical function.
+#'
+#' @param f a (multi-) dimensional function to be eptimized.
+#' @param x0 the starting point of the optimization.
+#' @param max.iter the maximum number of iterations performed in the optimization.
+#' @param step.size the step size (sometimes referred to as 'learn-rate') of the optimization.
+#' @param stop.grad the stop-criterion for the gradient change.
+#'
+#' @export
+grad.descent = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = .Machine$double.eps){
 
     xmat = matrix(0, nrow = (length(x0) +1), ncol = max.iter)
     xmat[1:2, 1] = x0
