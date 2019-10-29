@@ -10,7 +10,7 @@
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-grad.descent = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = .Machine$double.eps){
+gradDescent = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = .Machine$double.eps){
 
     xmat = matrix(0, nrow = (length(x0) +1), ncol = max.iter)
     xmat[1:2, 1] = x0

@@ -14,7 +14,11 @@
 #'
 #' @export
 
-grad.descent.momentum = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01, phi = 0.5){
+gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01, phi = 0.5){
+
+  if (!is.function(f)) stop("f is not a function")
+  if (is.na(f(x0))) stop("Dimensions of function and start point x0 do not match")
+  if ( (phi<0) | (phi>1)) stop("phi must be element [0,1]")
 
   xmat = matrix(0, nrow = (length(x0) +2), ncol = max.iter)
   xmat[1:2, 1] = x0 #x1,x2
