@@ -1,29 +1,30 @@
 library(plotly)
 
-plot.3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat) {
-
+plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat) {
 
   x1 = seq(x1.lower, x1.upper, length.out = n.x)
   x2 = seq(x2.lower, x2.upper, length.out = n.x)
-  y = outer(x1, x2, f)
+
+  df.x = mesh(x1, x2)
+
+  y = expand.grid(x1, x2)
+  y = apply(df, 1, f) %>%
+    cbind(y)
+  names(y) = c("y", "x1", "x2")
+
+  df.y = reshape(y, idvar = "x1", timevar = "x2", direction = "wide") %>%
+    as.matrix()
+  df.y = df.y[,-1]
+
+  colnames(df.y) = round(x2, 3)
+  rownames(df.y) = round(x1, 3)
+
 
   plot.title = capture.output(f)[1] %>%
     str_extract_all("(?<=\\{).+?(?=\\})")
 
-  plot = plot_ly() %>%
-    add_surface(x = x1, y = x2, z = y, colorscale = list(c(0,1), c("lightgrey", "gray"))) %>%
-    layout(
-      title = plot.title,
-      scene = list(
-        xaxis = list(title = "x1"),
-        yaxis = list(title = "x2"),
-        zaxis = list(title = "y"),
-        color = c("grey")
-    )) %>%
-    add_trace(type = "scatter3d", x = xmat$x1, y = xmat$x2, z = xmat$y,
-              mode = "markers", marker = list(color = "red")) %>%
-    add_annotations(text = "y", xref="paper", yref="paper", x=1.05, xanchor="left",
-                    y=1, yanchor="bottom", legendtitle=FALSE, showarrow=FALSE)
+  plot = surf3D(x = df.x$x, y = df.x$y , z = df.y, box )
+    scatter3D(xmat$x1, xmat$x2, xmat$y)
 
   return(plot)
 

@@ -5,7 +5,7 @@
 \title{Optimize mathematical function using gradient descent with momentum}
 \usage{
 gradDescentMomentum(f, x0, max.iter = 100, step.size = 0.01,
-  stop.grad = 0.01, phi = 0.5)
+  phi = 0.5, stop.grad = .Machine$double.eps)
 }
 \arguments{
 \item{f}{a (multi-) dimensional function to be eptimized.}
@@ -16,9 +16,9 @@ gradDescentMomentum(f, x0, max.iter = 100, step.size = 0.01,
 
 \item{step.size}{the step size (sometimes referred to as 'learn-rate') of the optimization.}
 
-\item{stop.grad}{the stop-criterion for the gradient change.}
-
 \item{phi}{controls the weight of the prior gradient contribution in the velocity.}
+
+\item{stop.grad}{the stop-criterion for the gradient change.}
 }
 \description{
 This functions uses the gradient descent algorithm with momentum to find

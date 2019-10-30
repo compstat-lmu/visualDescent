@@ -11,7 +11,7 @@
 #' @param xmat an object of class
 #'
 #' @export
-plot.2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat){
+plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat){
 
   # Modify 'xmat' to match 3rd coordinate (set to 0)
   xmat$y = 0

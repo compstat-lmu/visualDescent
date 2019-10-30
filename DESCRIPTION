@@ -1,4 +1,4 @@
-Package: visualGrad
+Package: visualDescent
 Type: Package
 Title: Visulaization of descent method for multi-dimensional optimization functions
 Version: 0.1.0
@@ -15,4 +15,5 @@ Imports: dplyr,
           numDeriv,
           RColorBrewer,
           reshape2,
+          stringr
 RoxygenNote: 6.1.1
