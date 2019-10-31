@@ -2,6 +2,9 @@
 #'
 #' This functions visualizes the steps of the optimization in a 2 dimensional contour plot.
 #'
+#' @import ggplot2
+#' @importFrom stringr "str_extract_all"
+#'
 #' @param f a (multi-) dimensional function to be eptimized.
 #' @param x1.lower the lower boundary for the range of the x1 coordinate displayed.
 #' @param x1.upper the upper boundary for the range of the x1 coordinate displayed.

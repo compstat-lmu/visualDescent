@@ -5,6 +5,9 @@
 #' 'phi' controls for the weight of prior gradients thus indirectly steering
 #' the velocity of the algorithm.
 #'
+#' @import numDeriv
+#' @importFrom magrittr "%>%"
+#'
 #' @param f a (multi-) dimensional function to be eptimized.
 #' @param x0 the starting point of the optimization.
 #' @param max.iter the maximum number of iterations performed in the optimization.
