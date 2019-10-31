@@ -2,7 +2,9 @@
 Visualization of different descent methods including GD, momentum method, AdaGrad
 
 # Installation
+```
 devtools::install_github("PhilippScheller/visualDescend")
+```
 
 # Example - First Steps
 
