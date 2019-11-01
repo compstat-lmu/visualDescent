@@ -13,7 +13,7 @@ LazyData: true
 Suggests:
     testthat,
     devtools
-Depends: 
+Imports: 
     dplyr,
     ggplot2,
     numDeriv,
