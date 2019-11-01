@@ -14,10 +14,9 @@
 #' @param max.iter the maximum number of iterations performed in the optimization.
 #' @param step.size the step size (sometimes referred to as 'learn-rate') of the optimization.
 #' @param stop.grad the stop-criterion for the gradient change.
-#' @param eps constant to ensure denominator does not equal 0.
 #'
 #' @export
-adaGrad = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01, eps = 0.01){
+adaGrad = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01){
 
   if (!is.function(f)) stop("f is not a function")
   if (is.na(f(x0))) stop("Dimensions of function and starting point x0 do not match")
@@ -28,6 +27,7 @@ adaGrad = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01, ep
   theta[length(x0)+1, 1] = f(x0)
 
   mu0 = mu1 = rep(0, times = length(x0))
+  eps = 0.01
 
   for (i in 2:max.iter) {
 
