@@ -26,6 +26,7 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
   theta[1:length(x0), 1] = x0
   theta[length(x0)+1, 1] = f(x0)
 
+
   mu0 = mu1 = rep(0, times = length(x0))
 
   for (i in 2:max.iter){
@@ -34,7 +35,7 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
     nabla = grad(f, theta[1:length(x0), i-1])
 
     #Calculate mu
-    mu1 = phi*mu0 + step.size*nabla
+    mu1 = phi*mu0 - step.size*nabla
 
     #Check if stop-criterion already reached
     if(all(abs(nabla) < stop.grad)){
@@ -43,7 +44,7 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
     }
 
     #Determine new point by moving into negative grad direction
-    theta[1:length(x0), i] = theta[1:length(x0), i-1] - mu1
+    theta[1:length(x0), i] = theta[1:length(x0), i-1] + mu1
     theta[length(x0)+1, i] = f(theta[1:length(x0), i])
     mu0 = mu1
   }

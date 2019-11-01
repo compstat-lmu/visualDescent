@@ -12,10 +12,12 @@
 #' @param x0 the starting point of the optimization.
 #' @param max.iter the maximum number of iterations performed in the optimization.
 #' @param step.size the step size (sometimes referred to as 'learn-rate') of the optimization.
+#' @param phi1 decay rate for RMS Prop term, i.e. the squared gradients.
+#' @param phi2 decay rate for Momentum term, i.e. the previous gradients.
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-adam = function(f, x0, max.iter = 100, step.size = 0.01, phi1 = 0.9, phi2 = 0.999, stop.grad = .Machine$double.eps){
+adam = function(f, x0, max.iter = 100, step.size = 0.01, phi1 = 0.5, phi2 = 0.8, stop.grad = .Machine$double.eps){
 
   if (!is.function(f)) stop("f is not a function")
   if (is.na(f(x0))) stop("Dimensions of function and starting point x0 do not match")
