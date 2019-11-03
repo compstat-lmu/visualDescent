@@ -1,4 +1,4 @@
-library(plotly)
+
 
 plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat) {
 

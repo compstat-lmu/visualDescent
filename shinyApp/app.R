@@ -1,7 +1,9 @@
 #
 library(shiny)
-
+library(visualDescent)
 # Define UI for application ggplot
+
+
 ui <- fluidPage(
 
         titlePanel(title=h4("Steps optimization procedure", align="center")),
@@ -33,7 +35,9 @@ ui <- fluidPage(
       )
 
 # Define server logic required to draw a histogram
+load("funData.rda")
 server <- function(input, output, session){
+
 
   funData = list(fun1 = funData$testfun1, fun2 = funData$testfun2)
 

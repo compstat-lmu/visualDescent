@@ -2,26 +2,24 @@
 % Please edit documentation in R/optim.AdaGrad.R
 \name{adaGrad}
 \alias{adaGrad}
-\title{Optimize mathematical function using AdaGrad}
+\title{Optimize mathematical function using the AdaGrad algorithm}
 \usage{
-adaGrad(f, x0, max.iter = 100, step.size = 0.01, stop.grad = 0.01,
-  eps = 0.01)
+adaGrad(f, x0, max.iter = 100, step.size = 0.01,
+  stop.grad = .Machine$double.eps)
 }
 \arguments{
-\item{f}{a (multi-) dimensional function to be eptimized.}
+\item{f}{a (slti-) dimensional function to be eptimized.}
 
 \item{x0}{the starting point of the optimization.}
 
-\item{max.iter}{the maximum number of iterations performed in the optimization.}
+\item{max.iter}{the maxism number of iterations performed in the optimization.}
 
 \item{step.size}{the step size (sometimes referred to as 'learn-rate') of the optimization.}
 
 \item{stop.grad}{the stop-criterion for the gradient change.}
-
-\item{eps}{constant to ensure denominator does not equal 0.}
 }
 \description{
-This functions uses the AdaGrad algorithm to find the minimum of a (multi-)
+This functions uses the AdaGrad algorithm to find the minism of a (slti-)
 dimensional mathematical function. The algorithm searches for the stepest descent
 w.r.t. each dimension separately. The 'eps' factor avoids numerical issues of
 dividing by 0. The 'step.size' scales the movement into the single coordinate
