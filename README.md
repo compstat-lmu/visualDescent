@@ -69,6 +69,13 @@ plotAdatestfun2 = plot2d(f = optimAdafun2$optimfun, x1.lower = -4, x1.upper = 4,
 plotAdatestfun2
 ```
 
+# Visualization via Shiny App
+Under the following link you can find a demo of the optimization algorithms with pre-defined 
+optimization functions. All important parameters of the optimization can be controlled and
+updated in realtime.
+
+
+[R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
 
 
 
