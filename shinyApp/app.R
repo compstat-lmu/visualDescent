@@ -1,7 +1,6 @@
-#
+
 library(shiny)
 library(visualDescent)
-# Define UI for application ggplot
 
 
 ui <- fluidPage(
@@ -34,7 +33,7 @@ ui <- fluidPage(
         mainPanel(column(2, plotOutput("plot", width = "700px", height = "500px"))))
       )
 
-# Define server logic required to draw a histogram
+
 load("funData.rda")
 server <- function(input, output, session){
 
