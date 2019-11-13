@@ -19,5 +19,6 @@ Depends:
     numDeriv,
     RColorBrewer,
     reshape2,
+    smoof,
     stringr
 RoxygenNote: 6.1.1
