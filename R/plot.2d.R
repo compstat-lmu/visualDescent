@@ -1,8 +1,11 @@
 #' Visualize optimization procedure in 2d contour plot
 #'
 #' This functions visualizes the steps of the optimization in a 2 dimensional contour plot.
+#' The default upper and lower bounds for the plot are set by the box constraints of the
+#' respective optimization function.
 #'
 #' @import ggplot2
+#' @import smoof
 #' @importFrom stringr "str_extract_all"
 #'
 #' @param f a (multi-) dimensional function to be eptimized.
@@ -14,7 +17,13 @@
 #' @param xmat an object of class
 #'
 #' @export
-plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat){
+plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat){
+
+  # Check if lower and upper bounds customized, else set to box constraints
+    if(missing(x1.lower)) x1.lower = getLowerBoxConstraints(f)[1]
+    if(missing(x2.lower)) x2.lower = getLowerBoxConstraints(f)[2]
+    if(missing(x1.upper)) x1.upper = getUpperBoxConstraints(f)[1]
+    if(missing(x2.upper)) x2.upper = getUpperBoxConstraints(f)[2]
 
   # Modify 'xmat' to match 3rd coordinate (set to 0)
   xmat$y = 0
@@ -27,8 +36,9 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat){
   y = apply(df, 1, f)
 
   plot.df = data.frame(df, y)
-  plot.title = capture.output(f)[1] %>%
-            str_extract_all("(?<=\\{).+?(?=\\})")
+  # plot.title = capture.output(f)[1] %>%
+  #           str_extract_all("(?<=\\{).+?(?=\\})")
+  plot.title = getName(f)
 
   names(plot.df) = c("x1", "x2", "y")
 

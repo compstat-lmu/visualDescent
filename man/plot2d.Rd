@@ -4,7 +4,7 @@
 \alias{plot2d}
 \title{Visualize optimization procedure in 2d contour plot}
 \usage{
-plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat)
+plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat)
 }
 \arguments{
 \item{f}{a (multi-) dimensional function to be eptimized.}
@@ -23,4 +23,6 @@ plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x, xmat)
 }
 \description{
 This functions visualizes the steps of the optimization in a 2 dimensional contour plot.
+The default upper and lower bounds for the plot are set by the box constraints of the
+respective optimization function.
 }

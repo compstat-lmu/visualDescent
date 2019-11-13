@@ -1,4 +1,3 @@
-
 library(shiny)
 library(visualDescent)
 
@@ -37,51 +36,50 @@ ui <- fluidPage(
 load("funData.rda")
 server <- function(input, output, session){
 
-
-  funData = list(fun1 = funData$testfun1, fun2 = funData$testfun2)
+  Reactives = reactiveValues()
 
   observe({
     if(input$functions == "Function 1"){
-      funPlot <<- funData$fun1
+      Reactives$plot <<- funData$testfun1
     }
     if(input$functions == "Function 2"){
-      funPlot <<- funData$fun2
+      Reactives$plot <<- funData$testfun2
     }})
 
   observe({
-    startx1 <<- as.numeric(input$startx1)
-    startx2 <<- as.numeric(input$startx2)
+    Reactives$x1 <<- as.numeric(input$startx1)
+    Reactives$x2 <<- as.numeric(input$startx2)
   })
 
   observe({
-    phi1 <<- as.numeric(input$phi1)
-    phi2 <<- input$phi2
+    Reactives$phi1 <<- input$phi1
+    Reactives$phi2 <<- input$phi2
   })
 
   observe({
     if(input$method == "Gradien Descent"){
             output$plot = renderPlot({
-                            plot2d(funPlot, -4, 4, -4, 4, 30,
-                                    gradDescent(funPlot, c(startx1, startx2), step.size = input$step.size,
+                            plot2d(Reactives$plot, -4, 4, -4, 4, 30,
+                                    gradDescent(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                                                           max.iter = input$max.iter)$results)})
     }
     if(input$method == "Momentum"){
       output$plot = renderPlot({
-        plot2d(funPlot, -4, 4, -4, 4, 30,
-               gradDescentMomentum(funPlot, c(startx1, startx2), step.size = input$step.size,
+        plot2d(Reactives$plot, -4, 4, -4, 4, 30,
+               gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                            max.iter = input$max.iter, phi = input$phi)$results)})
     }
     if(input$method == "AdaGrad"){
       output$plot = renderPlot({
-        plot2d(funPlot, -4, 4, -4, 4, 30,
-               adaGrad(funPlot, c(startx1, startx2), step.size = input$step.size,
+        plot2d(Reactives$plot, -4, 4, -4, 4, 30,
+               adaGrad(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                                    max.iter = input$max.iter)$results)})
     }
     if(input$method == "Adam"){
       output$plot = renderPlot({
-        plot2d(funPlot, -4, 4, -4, 4, 30,
-               adam(funPlot, c(startx1, startx2), step.size = input$step.size,
-                       max.iter = input$max.iter, phi1 = phi1, phi2 = phi2)$results)})
+        plot2d(Reactives$plot, -4, 4, -4, 4, 30,
+               adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
+                       max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results)})
     }})
 }
 
