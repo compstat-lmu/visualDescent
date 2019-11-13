@@ -1,3 +1,4 @@
+library(smoof)
 library(shiny)
 library(visualDescent)
 
@@ -33,17 +34,18 @@ ui <- fluidPage(
       )
 
 
-load("funData.rda")
+readRDS("funData.rds")
+
 server <- function(input, output, session){
 
   Reactives = reactiveValues()
 
   observe({
     if(input$functions == "Function 1"){
-      Reactives$plot <<- funData$testfun1
+      Reactives$plot <<- funData$Ackley2d
     }
     if(input$functions == "Function 2"){
-      Reactives$plot <<- funData$testfun2
+      Reactives$plot <<- funData$Beale
     }})
 
   observe({
