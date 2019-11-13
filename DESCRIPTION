@@ -16,6 +16,7 @@ Suggests:
 Depends: 
     dplyr,
     ggplot2,
+    rmarkdown,
     numDeriv,
     RColorBrewer,
     reshape2,
