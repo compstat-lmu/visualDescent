@@ -30,8 +30,8 @@ Note: setting 'phi=0' (all else equal) leads to same results than optimization w
 
 ### AdaGrad
 ```r
-optimAdafun1 = adaGrad(f = testfun1, x0 = c(-4, -4), step.size = 0.1, max.iter = 10000, eps = 0.01)
-optimAdafun2 = adaGrad(f = testfun2, x0 = c(0, -2), step.size = 0.05, max.iter = 1000, eps = 0.01)
+optimAdafun1 = adaGrad(f = testfun1, x0 = c(-4, -4), step.size = 0.1, max.iter = 1000)
+optimAdafun2 = adaGrad(f = testfun2, x0 = c(0, -2), step.size = 0.05, max.iter = 1000)
 ```
 
 ## Step 3 - Plot functions and iterations in optimization procedure
