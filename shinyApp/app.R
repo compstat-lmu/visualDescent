@@ -67,42 +67,53 @@ server <- function(input, output, session){
 
   observe({
 
-    req(Reactives$plot, Reactives$x1, Reactives$x2, input$step.size, input$max.iter, Reactives$phi1, Reactives$phi2, input$functions)
 
+    req(Reactives$plot, Reactives$x1, Reactives$x2, input$step.size, input$max.iter, input$method, Reactives$phi1, Reactives$phi2, input$functions)
+  print(input$method)
     if ("GradientDescent" %in% input$method) {
       resultsGD = gradDescent(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                                       max.iter = input$max.iter)$results
     } else {
-      resultsGD = c(0,0)
+      resultsGD = c(0,0,0)
     }
 
     if ("Momentum" %in% input$method) {
       resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                                                     max.iter = input$max.iter, phi = input$phi)$results
     } else {
-      resultsMomentum = c(0,0)
+      resultsMomentum = c(0,0,0)
     }
 
     if ("AdaGrad" %in% input$method) {
     resultsAdaGrad = adaGrad(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                              max.iter = input$max.iter)$results
     } else {
-      resultsAdaGrad = c(0,0)
+      resultsAdaGrad = c(0,0,0)
     }
 
     if ("Adam" %in% input$method) {
       resultsAdam = adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                        max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results
     } else {
-      resultsAdam = c(0,0)
+      resultsAdam = c(0,0,0)
     }
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam)
+
+    print(input$method)
+    if(input$method == 0){
+      print("hallo")
+    }
     Reactives$results = results[input$method]
+
+
+    print(results[input$method])
+    print(str(results[input$method]))
+
 
   }, priority = 1)
 
   observe({
-
+            req(Reactives$results)
             output$plot = renderPlot({
                             plot2d(Reactives$plot, get(input$functions, xValues)[1], get(input$functions, xValues)[3],
                                    get(input$functions, xValues)[2], get(input$functions, xValues)[4],
