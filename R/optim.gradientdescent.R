@@ -42,5 +42,5 @@ gradDescent = function(f, x0, max.iter = 100, step.size = 0.01, stop.grad = .Mac
     names(out) = paste0("x", 1:(ncol(out)))
     out = cbind(out, y = theta[length(x0)+1, ])
 
-    return(list(results = out, niter = i, optimfun = f))
+    return(list(algorithm = "Gradient Descent", results = out, niter = i, optimfun = f))
   }

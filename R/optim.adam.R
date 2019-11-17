@@ -66,5 +66,5 @@ adam = function(f, x0, max.iter = 100, step.size = 0.01, phi1 = 0.5, phi2 = 0.8,
   names(out) = paste0("x", 1:(ncol(out)))
   out = cbind(out, y = theta[length(x0)+1, ])
 
-  return(list(results = out, niter = i, optimfun = f))
+  return(list(algorithm = "Adam", results = out, niter = i, optimfun = f))
 }
