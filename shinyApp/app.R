@@ -77,16 +77,25 @@ server <- function(input, output, session){
     }
 
     if ("Momentum" %in% input$method) {
-    resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
+      resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                                                     max.iter = input$max.iter, phi = input$phi)$results
     } else {
       resultsMomentum = c(0,0)
     }
+
+    if ("AdaGrad" %in% input$method) {
     resultsAdaGrad = adaGrad(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                              max.iter = input$max.iter)$results
-    resultsAdam = adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-                       max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results
+    } else {
+      resultsAdaGrad = c(0,0)
+    }
 
+    if ("Adam" %in% input$method) {
+      resultsAdam = adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
+                       max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results
+    } else {
+      resultsAdam = c(0,0)
+    }
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam)
     Reactives$results = results[input$method]
 
