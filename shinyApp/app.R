@@ -98,17 +98,7 @@ server <- function(input, output, session){
       resultsAdam = c(0,0,0)
     }
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam)
-
-    print(input$method)
-    if(input$method == 0){
-      print("hallo")
-    }
     Reactives$results = results[input$method]
-
-
-    print(results[input$method])
-    print(str(results[input$method]))
-
 
   }, priority = 1)
 

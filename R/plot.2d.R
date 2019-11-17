@@ -65,8 +65,6 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, al
 
   for (i in 1:(nresults-1)) {
     data = data.frame(xmat[[i]])
-    print(xmat[[i]])
-    print(paste("data", data))
     plot = plot + geom_point(data = data, color = i, size = .8)
   }
 
