@@ -15,14 +15,14 @@ ui <- fluidPage(
 
         sidebarLayout(position = "left",
                       sidebarPanel(
-                        checkboxGroupInput("method", "Choose optimization methods", choices = c("GradienDescent", "Momentum",
+                        checkboxGroupInput("method", "Choose optimization methods", choices = c("GradientDescent", "Momentum",
                                                                           "AdaGrad", "Adam"), selected = "AdaGrad"),
                         uiOutput("x1coords"),
                         uiOutput("x2coords"),
                         selectInput("functions", "Choose predefined function", choices = funNames, selected = "Ackley2d"),
 
-                        sliderInput("step.size", "Step size:", min = 0, max = 1, step = 0.05, value= 0.1),
-                        sliderInput("max.iter", "Maximum number of iterations:",min = 0, max = 1000, step=1, value= 10),
+                        sliderInput("step.size", "Step size:", min = 0, max = 0.1, step = 0.001, value= 0.001),
+                        sliderInput("max.iter", "Maximum number of iterations:",min = 0, max = 10000, step=1, value= 10),
                         sliderInput("phi", HTML("Velocity parameter &Phi;:"),min = 0, max = 1, step=0.05, value= 0.1),
                         sliderInput("phi1", HTML("Decay rate &Phi; 1:"),min = 0, max = 1, step=0.05, value= 0.9),
                         sliderInput("phi2", HTML("Decay rate &Phi; 2:"),min = 0, max = 1, step=0.05, value= 0.95)),
@@ -69,21 +69,25 @@ server <- function(input, output, session){
 
     req(Reactives$plot, Reactives$x1, Reactives$x2, input$step.size, input$max.iter, Reactives$phi1, Reactives$phi2, input$functions)
 
-    print(get(input$functions, xValues)[3])
+    if ("GradientDescent" %in% input$method) {
+      resultsGD = gradDescent(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
+                                      max.iter = input$max.iter)$results
+    } else {
+      resultsGD = c(0,0)
+    }
 
-    print(Reactives$x1)
-    print(c(Reactives$plot, Reactives$x1, Reactives$x2, input$step.size, input$max.iter, Reactives$phi1, Reactives$phi2))
-
-    # resultsGD = gradDescent(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-    #                                   max.iter = input$max.iter)$results
-    # resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-    #                                                 max.iter = input$max.iter, phi = input$phi)$results
+    if ("Momentum" %in% input$method) {
+    resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
+                                                    max.iter = input$max.iter, phi = input$phi)$results
+    } else {
+      resultsMomentum = c(0,0)
+    }
     resultsAdaGrad = adaGrad(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                              max.iter = input$max.iter)$results
     resultsAdam = adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
                        max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results
 
-    results = list(AdaGrad = resultsAdaGrad, Adam = resultsAdam)
+    results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam)
     Reactives$results = results[input$method]
 
   }, priority = 1)

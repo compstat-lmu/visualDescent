@@ -4,7 +4,8 @@
 \alias{plot2d}
 \title{Visualize optimization procedure in 2d contour plot}
 \usage{
-plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat)
+plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat,
+  algoName = NULL)
 }
 \arguments{
 \item{f}{a (multi-) dimensional function to be eptimized.}
@@ -19,7 +20,9 @@ plot2d(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat)
 
 \item{n.x}{the number (equidistant) points at which f is evaluated w.r.t x1 and x2 coordinate.}
 
-\item{xmat}{an object of class}
+\item{xmat}{an object of class list containing the results of the algorithm.}
+
+\item{algoNamw}{list of strings with names of algorithms. Length must equal length of 'xmat'.}
 }
 \description{
 This functions visualizes the steps of the optimization in a 2 dimensional contour plot.

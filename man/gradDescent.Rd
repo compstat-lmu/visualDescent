@@ -4,7 +4,7 @@
 \alias{gradDescent}
 \title{Optimize mathematical function using gradient descent}
 \usage{
-gradDescent(f, x0, max.iter = 100, step.size = 0.01,
+gradDescent(f, x0, max.iter = 100, step.size = 0.001,
   stop.grad = .Machine$double.eps)
 }
 \arguments{
