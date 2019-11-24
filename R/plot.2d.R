@@ -16,14 +16,16 @@
 #' @param x2.upper the upper boundary for the range of the x2 coordinate displayed.
 #' @param n.x the number (equidistant) points at which f is evaluated w.r.t x1 and x2 coordinate.
 #' @param xmat an object of class list containing the results of the algorithm.
+#' @param trueOpt is a numeric vector of the true optimum of the function.
 #' @param algoNamw list of strings with names of algorithms. Length must equal length of 'xmat'.
 #'
 #' @export
-plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, algoName = NULL) {
+plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, trueOpt = NULL, algoName = NULL) {
 
   # Check several input parameter
     if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
     if (checkList(algoName) == FALSE) stop("'algoName' must be a list object")
+    if (!is.null(trueOpt) & !is.numeric(trueOpt)) stop("provided true optimum must be a numeric vector")
     if (length(xmat) > length(algoName) && !is.null(algoName)) {
       warning("unsufficient names provides: outstanding instances autofilled")
       algoName = as.list(unlist(algoName), paste0("AlgoAutoFill", (length(xmat) - length(algoName)):length(xmat)))
@@ -39,9 +41,15 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, al
     if (missing(x2.upper)) x2.upper = getUpperBoxConstraints(f)[2]
 
   # Modify 'xmat' to match 3rd coordinate (set to 0) and identify number of procedures to be plotted
-  xmat$y = 0
-  nresults = length(xmat)
-  col = seq(1:nresults)
+    nresults = length(xmat)
+    xmat$y = 0
+    xmat = as.list(xmat)
+    col = c("black", "red", "blue", "green")
+    col = col[1:nresults]
+
+    if (!is.null(trueOpt)) plot.dfOpt = data.frame(x1 = trueOpt[1], x2 = trueOpt[2])
+
+
 
   # Generate grid with specfied dimensions and data.frame for plot
   x1 = seq(x1.lower, x1.upper, length.out = n.x)
@@ -51,22 +59,39 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, al
   y = apply(df, 1, f)
 
   plot.df = data.frame(df, y)
-  # plot.title = capture.output(f)[1] %>%
-  #           str_extract_all("(?<=\\{).+?(?=\\})")
   plot.title = getName(f)
 
   names(plot.df) = c("x1", "x2", "y")
+
+  plot.points.df = mapply(function(u, v, w) cbind.data.frame(u, data.frame(name = v, col = w, stringsAsFactors = FALSE)),
+                          u = xmat[-(nresults+1)], v = algoName, w = col, SIMPLIFY = F)
+
+  plot.points.df = do.call(rbind, plot.points.df)
 
   # Generate contour plot and add steps of descent procedure as points
   plot = ggplot(plot.df, aes(x1, x2, z = y)) +
     stat_contour(bins = n.x, aes(colour = stat(level))) +
     ggtitle(paste(plot.title)) +
-    theme(plot.title = element_text(hjust = .5))
+    geom_point(data = plot.points.df, aes(x = x1, y = x2, fill = name, alpha = .1),
+               color = plot.points.df$col, alpha = .2) +
+    scale_fill_manual(name = "Test", values = plot.points.df$col) +
+    # guides(colour = guide_legend(override.aes = list(color = c("black", "blue", "green", "grey")))) +
+    # scale_colour_manual(breaks = plot.points.df$name, values = unique(plot.points.df$col)) +
+    theme(plot.title = element_text(hjust = .5)) +
+    theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 
-  for (i in 1:(nresults-1)) {
-    data = data.frame(xmat[[i]])
-    plot = plot + geom_point(data = data, color = i, size = .8)
-  }
+    if(!is.null(trueOpt)) {
+      plot = plot + geom_point(aes(x = plot.dfOpt$x1, y = plot.dfOpt$x2, fill = "True Optimum"), color = "purple")
+    }
+  # for (i in 1:nresults) {
+  #
+  #   data = data.frame(x = xmat[[i]]$x1, y = xmat[[i]]$x2)
+  #   print(algoName[[i]])
+  #   plot = plot + geom_point(data = data, aes(x = x, y = y, fill = algoName[[i]]), color = col[i], size = .8)
+  # }
+
+  plot = plot + theme(legend.title = element_blank())
+
 
   # Return ggplot object
   return(plot)
