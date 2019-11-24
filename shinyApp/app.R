@@ -14,10 +14,9 @@ opt = lapply(funData, function(x) {x1 = getGlobalOptimum(x)$param[1]
 
 ui <- fluidPage(
 
-        titlePanel(title=h4("Steps optimization procedure", align="center")),
 
-        sidebarLayout(position = "left",
-                      sidebarPanel(
+        fluidRow(
+        column(3,
                         checkboxGroupInput("method", "Choose optimization methods", choices = c("GradientDescent", "Momentum",
                                                                           "AdaGrad", "Adam"), selected = "AdaGrad"),
                         uiOutput("x1coords"),
@@ -30,8 +29,21 @@ ui <- fluidPage(
                         sliderInput("phi1", HTML("Decay rate &Phi; 1 (Adam):"),min = 0, max = 1, step=0.05, value= 0.9),
                         sliderInput("phi2", HTML("Decay rate &Phi; 2 (Adam):"),min = 0, max = 1, step=0.05, value= 0.95)),
 
-        mainPanel(column(2, plotOutput("plot", width = "700px", height = "500px"))))
-      )
+        column(6,
+                mainPanel(
+                  # h3("Steps optimization procedure", align= "center"),
+                  plotOutput("plot", width = "800px", height = "500px"))),
+
+        column(9,
+               mainPanel(
+                 # h3("Algorithms", align = "center"),
+                 img(src = "Algorithms.png", height = 400, width = 700)
+               ))
+        ))
+
+
+
+
 
 
 
