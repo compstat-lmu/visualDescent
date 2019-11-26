@@ -12,8 +12,10 @@ opt = lapply(funData, function(x) {x1 = getGlobalOptimum(x)$param[1]
                                     return(c(x1, x2))})
 
 examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step.size = 0.002, max.iter = 200,
-                                 phi = 0.9, phi1 = 0, phi2 = 0, fun = c("StyblinkskiTang"), startx1 = 0, startx2 = -4),
-                Scenario2 = list(method = c("Adam", "AdaGrad"), step.size = 0.08, max.iter = 500,
+                                 phi = 0.9, phi1 = 0, phi2 = 0, fun = c("StyblinkskiTang"), startx1 = 5, startx2 = -5),
+                Scenario2 = list(method = c("GradientDescent", "Momentum"), step.size = 0.4, max.iter = 10,
+                                 phi = 0.15, phi1 = 0, phi2 = 0, fun = c("Paraboloid"), startx1 = -18, startx2 = - 13),
+                Scenario3 = list(method = c("Adam", "AdaGrad"), step.size = 0.08, max.iter = 500,
                                  phi = 0, phi1 = 0.9, phi2 = 0.95, fun = c("Himmelblau"), startx1 = 0, startx2 = -4))
 
 
@@ -22,12 +24,12 @@ ui <- fluidPage(
 
         fluidRow(
         column(3,
+                        radioButtons("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
+                                                                  "Scenario3")),
+                        uiOutput("fun"),
                         uiOutput("method"),
-                        checkboxGroupInput("examples", "Choose predefined set of parameters", choices = c("Scenario1", "Scenario2",
-                                                                                       "Scenario3", "Scenario4")),
                         uiOutput("x1coords"),
                         uiOutput("x2coords"),
-                        uiOutput("fun"),
                         uiOutput("step.size"),
                         uiOutput("max.iter"),
                         uiOutput("phi"),
@@ -42,7 +44,7 @@ ui <- fluidPage(
         column(9,
                mainPanel(
                  # h3("Algorithms", align = "center"),
-                 img(src = "Algorithms.png", height = 400, width = 700)
+                 img(src = "Algorithms2.png", height = 400, width = 700)
                ))
         ))
 
@@ -92,7 +94,7 @@ server <- function(input, output, session){
 
   observe({
 
-      output$x1coords = renderUI({ sliderInput("startx1", "Choose start point x1",
+      output$x1coords = renderUI({ sliderInput("startx1", HTML("Choose Start Point &theta;<sub>1</sub>"),
                                           min = get(Reactives$fun, xValues)[1],
                                           max = get(Reactives$fun, xValues)[3],
                                           step = 0.01,
@@ -103,7 +105,7 @@ server <- function(input, output, session){
                                           }
                                         )})
 
-  output$x2coords = renderUI({ sliderInput("startx2", "Choose start point x2",
+  output$x2coords = renderUI({ sliderInput("startx2", HTML("Choose Start Point &theta;<sub>2</sub>"),
                                            min = get(Reactives$fun, xValues)[2],
                                            max = get(Reactives$fun, xValues)[4],
                                            step = 0.01,
@@ -114,7 +116,7 @@ server <- function(input, output, session){
                                            }
                                           )})
 
-  output$method = renderUI({checkboxGroupInput("method", "Choose optimization methods",
+  output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
                                                choices = c("GradientDescent", "Momentum",
                                                             "AdaGrad", "Adam"),
                                                selected = if (is.null(input$examples)) {
@@ -124,7 +126,7 @@ server <- function(input, output, session){
                                                             }
                                               )})
 
-  output$fun = renderUI({selectInput("fun", "Choose predefined function",
+  output$fun = renderUI({selectInput("fun", "Choose Objective Function",
                                       choices = funNames, selected = if (is.null(input$examples)) {
                                                             "Ackley2d"
                                                             } else {
@@ -132,8 +134,8 @@ server <- function(input, output, session){
                                                             }
                                       )})
 
-  output$step.size = renderUI({sliderInput("step.size", "Step size (all):",
-                                           min = 0, max = 0.1, step = 0.001,
+  output$step.size = renderUI({sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
+                                           min = 0, max = 1, step = 0.001,
                                            value =  if (is.null(input$examples)) {
                                                       0.001
                                            } else {
@@ -141,7 +143,7 @@ server <- function(input, output, session){
                                            }
                                              )})
 
-  output$max.iter = renderUI({sliderInput("max.iter", "Maximum number of iterations (all):",
+  output$max.iter = renderUI({sliderInput("max.iter", "Max. iterations T (all optimizers):",
                                           min = 0, max = 10000, step = 1,
                                           value = if (is.null(input$examples)) {
                                                       10
@@ -150,7 +152,7 @@ server <- function(input, output, session){
                                             }
                                           )})
 
-  output$phi = renderUI({sliderInput("phi", HTML("Velocity parameter &Phi; (Momentum):"),
+  output$phi = renderUI({sliderInput("phi", HTML("Momentum &phi; :"),
                                      min = 0, max = 1, step = 0.05,
                                      value = if (is.null(input$examples)) {
                                        0.1
@@ -159,7 +161,7 @@ server <- function(input, output, session){
                                      }
                                        )})
 
-  output$phi1 = renderUI({sliderInput("phi1", HTML("Decay rate &Phi; 1 (Adam):"),
+  output$phi1 = renderUI({sliderInput("phi1", HTML("Decay Rate &rho;<sub>1</sub> (Adam):"),
                                       min = 0, max = 1, step=0.05,
                                       value= if (is.null(input$examples)) {
                                         0.9
@@ -168,7 +170,7 @@ server <- function(input, output, session){
                                       }
                                         )})
 
-  output$phi2 = renderUI({sliderInput("phi2", HTML("Decay rate &Phi; 2 (Adam):"),
+  output$phi2 = renderUI({sliderInput("phi2", HTML("Decay Rate &rho;<sub>2</sub> (Adam):"),
                                       min = 0, max = 1, step=0.05,
                                       value= if (is.null(input$examples)) {
                                         0.95
