@@ -24,7 +24,7 @@ ui <- fluidPage(
 
         fluidRow(
         column(3,
-                        radioButtons("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
+                        checkboxGroupInput("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
                                                                   "Scenario3")),
                         uiOutput("fun"),
                         uiOutput("method"),
@@ -44,7 +44,7 @@ ui <- fluidPage(
         column(9,
                mainPanel(
                  # h3("Algorithms", align = "center"),
-                 img(src = "Algorithms2.png", height = 400, width = 700)
+                 img(src = "algorithms.png", height = 400, width = 700)
                ))
         ))
 

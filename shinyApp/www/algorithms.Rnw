@@ -1,0 +1,91 @@
+\documentclass{article}
+\usepackage[T1]{fontenc}
+\usepackage{geometry}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+
+\geometry{verbose,tmargin=0cm,bmargin=0cm,lmargin=0cm,rmargin=0cm}
+\usepackage[unicode=true,pdfusetitle,
+ bookmarks=true,bookmarksnumbered=true,bookmarksopen=true,bookmarksopenlevel=2,
+ breaklinks=false,pdfborder={0 0 1},backref=false,colorlinks=false]
+ {hyperref}
+
+
+
+\begin{document}
+
+\begin{minipage}[t]{0.45\textwidth}
+
+	\begin{algorithm}[H]
+		\small
+		\caption{Gradient Descent (GD)}
+		\begin{algorithmic}[1]
+		\Require{learning rate $\alpha$, starting point $\mathbf{\theta}$}
+	    \State{Initialize $t = 0$}
+		\While{$t \le T$}
+			\State{$\mathbf{\theta}\leftarrow \mathbf{\theta} - \alpha \nabla \mathcal{R}(\mathbf{\theta})$}
+			\State{$t = t + 1$}
+		\EndWhile
+		\end{algorithmic}
+	\end{algorithm}
+\end{minipage} \quad
+\begin{minipage}[t]{0.45\textwidth}
+	\begin{algorithm}[H]
+		\small
+	    \caption{GD with momentum}
+	    \begin{algorithmic}[1]
+		    \Require{learning rate $\alpha$, momentum $\varphi$\strut}
+		    \Require{starting point $\mathbf{\theta}$, initial velocity $\mathbf{\nu} $ \strut}
+		    \State{Initialize $t = 0$}
+			\While{$t \le T$}
+		        \State{Compute velocity update: $\mathbf{\nu} \leftarrow \varphi \mathbf{\nu}- \alpha \nabla \mathcal{R}(\mathbf{\theta})$}
+		        \State{Apply update: $\mathbf{\theta} \leftarrow \mathbf{\theta} + \mathbf{\nu}$}
+				\State{$t = t + 1$}
+		      \EndWhile
+	    \end{algorithmic}
+  \end{algorithm}
+\end{minipage}
+
+\begin{minipage}[t]{0.45\textwidth}
+
+	\begin{algorithm}[H]
+		\small
+		\caption{Adagrad}
+		\begin{algorithmic}[1]
+		\Require{learning rate $\alpha$, starting point $\mathbf{\theta}$}
+		\Require{Small constant $\beta$ for numerical stability}
+		\State{Initialize $t = 0$}
+		\State{Initialize gradient accumulation variable $r = 0$}
+		\While{$t \le T$}
+	         \State{Accumulate squared gradient $r \leftarrow r + \nabla \mathcal{R}(\mathbf{\theta}) \odot  \nabla \mathcal{R}(\mathbf{\theta})$}
+	         \State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla \mathbf{\theta} \leftarrow - \frac{\alpha}{\beta + \sqrt(r)} \odot \nabla \mathcal{R}(\mathbf{\theta})$\strut}
+		        \State{Apply update: $\mathbf{\theta} \leftarrow \mathbf{\theta} + \nabla \mathbf{\theta}$}
+			\State{$t = t + 1$}
+		\EndWhile
+		\end{algorithmic}
+	\end{algorithm}
+\end{minipage} \quad
+\begin{minipage}[t]{0.45\textwidth}
+	\begin{algorithm}[H]
+		\small
+	    \caption{Adam}
+	    \begin{algorithmic}[1]
+		    \Require{Learning rate $\alpha$, decay rates $\rho_1, \rho_2 \in [0, 1)$\strut}
+		    \Require{Small constant $\beta$ for numerical stability}
+		    \Require{Starting point $\mathbf{\theta}$}
+			\State{Initialize 1st and 2nd moment variables $s, r = 0$}
+			\While{$t \le T$}
+				\State{$t = t + 1$}
+		    	\State Update biased first moment estimate: $s \leftarrow \rho_1 s + (1 - \rho_1) \nabla \mathcal{R}(\mathbf{\theta})$
+		    	\State Update biased second moment estimate: $r \leftarrow \rho_2 r + (1 - \rho_2) \nabla \mathcal{R}(\mathbf{\theta}) \odot \nabla \mathcal{R}(\mathbf{\theta})$
+		    	\State Correct bias in first moment: $\hat{s} \leftarrow \frac{s}{1-\rho_1^t}$
+		    	\State Correct bias in second moment: $\hat{r} \leftarrow \frac{r}{1-\rho_2^t}$
+		    	\State \parbox[t]{\dimexpr\linewidth-\algorithmicindent}{Compute update: $\nabla\mathbf{\theta} \leftarrow - \alpha \frac{\hat{s}}{\sqrt{\hat{r}} + \beta}$ \strut}
+		      \State Apply update: $\mathbf{\theta} \leftarrow \mathbf{\theta} + \nabla\mathbf{\theta}$
+		      \EndWhile
+	    \end{algorithmic}
+  \end{algorithm}
+\end{minipage}
+
+\end{document}
