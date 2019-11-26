@@ -72,13 +72,14 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, tr
   plot = ggplot(plot.df, aes(x1, x2, z = y)) +
     stat_contour(bins = n.x, aes(colour = stat(level))) +
     ggtitle(paste(plot.title)) +
-    geom_point(data = plot.points.df, aes(x = x1, y = x2, fill = name, alpha = .1),
-               color = plot.points.df$col, alpha = .2) +
+    geom_point(data = plot.points.df, aes(x = x1, y = x2, fill = name),
+               color = plot.points.df$col, alpha = .5) +
     scale_fill_manual(name = "Test", values = plot.points.df$col) +
     # guides(colour = guide_legend(override.aes = list(color = c("black", "blue", "green", "grey")))) +
     # scale_colour_manual(breaks = plot.points.df$name, values = unique(plot.points.df$col)) +
     theme(plot.title = element_text(hjust = .5)) +
-    theme(panel.background = element_rect(fill = 'white', colour = 'black'))
+    theme(panel.background = element_rect(fill = 'white', colour = 'black')) 
+
 
     if(!is.null(trueOpt)) {
       plot = plot + geom_point(aes(x = plot.dfOpt$x1, y = plot.dfOpt$x2, fill = "True Optimum"), color = "purple")
