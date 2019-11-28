@@ -21,5 +21,6 @@ Depends:
     RColorBrewer,
     reshape2,
     smoof,
-    stringr
+    stringr,
+    ggnewscale
 RoxygenNote: 6.1.1
