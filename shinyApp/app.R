@@ -14,18 +14,21 @@ opt = lapply(funData, function(x) {x1 = getGlobalOptimum(x)$param[1]
 examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step.size = 0.002, max.iter = 200,
                                  phi = 0.9, phi1 = 0, phi2 = 0, fun = c("StyblinkskiTang"), startx1 = 5, startx2 = -5),
                 Scenario2 = list(method = c("GradientDescent", "Momentum"), step.size = 0.4, max.iter = 10,
-                                 phi = 0.15, phi1 = 0, phi2 = 0, fun = c("Paraboloid"), startx1 = -18, startx2 = - 13),
-                Scenario3 = list(method = c("Adam", "AdaGrad"), step.size = 0.08, max.iter = 500,
-                                 phi = 0, phi1 = 0.9, phi2 = 0.95, fun = c("Himmelblau"), startx1 = 0, startx2 = -4))
-
+                                 phi = 0.05, phi1 = 0, phi2 = 0, fun = c("Paraboloid"), startx1 = - 15, startx2 = -15),
+                Scenario3 = list(method = c("Adam", "AdaGrad", "GradientDescent", "Momentum"), step.size = 0.451, max.iter = 35,
+                                 phi = 0.2, phi1 = 0.75, phi2 = 0.65, fun = c("Paraboloid"), startx1 = - 20, startx2 = -20))
+  
 
 ui <- fluidPage(
-
-
         fluidRow(
         column(3,
-                        checkboxGroupInput("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
-                                                                  "Scenario3")),
+                        actionButton("example1", "Example 1"),
+                        actionButton("example2", "Example 2"),
+                        actionButton("example3", "Example 3"),
+
+                        # checkboxGroupInput("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
+
+                        #                                        "Scenario3")),
                         uiOutput("fun"),
                         uiOutput("method"),
                         uiOutput("x1coords"),
@@ -50,21 +53,53 @@ ui <- fluidPage(
 
 
 
-
-
-
-
-
 server <- function(input, output, session){
 
 
   Reactives = reactiveValues()
 
+  observeEvent(
+    input$example1, {
+      updateSelectInput(session, "fun", label = examples$Scenario1$fun, selected = examples$Scenario1$fun)
+      updateCheckboxInput(session, "method", value = examples$Scenario1$method) 
+      updateSliderInput(session, "step.size", value = examples$Scenario1$step.size) 
+      updateSliderInput(session, "max.iter", value = examples$Scenario1$max.iter) 
+      updateSliderInput(session, "phi", value = examples$Scenario1$phi) 
+      updateSliderInput(session, "phi1", value = examples$Scenario1$phi1)
+      updateSliderInput(session, "phi2", value = examples$Scenario1$phi2)
+      updateSliderInput(session, "startx1", value = examples$Scenario1$startx1)
+      updateSliderInput(session, "startx2", value = examples$Scenario1$startx2)
+    }, priority = -1)
+
+  observeEvent(
+    input$example2, {
+      updateSelectInput(session, "fun", label = examples$Scenario2$fun, selected = examples$Scenario2$fun)
+      updateCheckboxInput(session, "method", value = examples$Scenario2$method) 
+      updateSliderInput(session, "step.size", value = examples$Scenario2$step.size) 
+      updateSliderInput(session, "max.iter", value = examples$Scenario2$max.iter) 
+      updateSliderInput(session, "phi", value = examples$Scenario2$phi) 
+      updateSliderInput(session, "phi1", value = examples$Scenario2$phi1)
+      updateSliderInput(session, "phi2", value = examples$Scenario2$phi2)
+      updateSliderInput(session, "startx1", value = examples$Scenario2$startx1)
+      updateSliderInput(session, "startx2", value = examples$Scenario2$startx2)
+    }, priority = -1)
+
+  observeEvent(
+    input$example3, {
+      updateSelectInput(session, "fun", label = examples$Scenario3$fun, selected = examples$Scenario3$fun)
+      updateCheckboxInput(session, "method", value = examples$Scenario3$method) 
+      updateSliderInput(session, "step.size", value = examples$Scenario3$step.size) 
+      updateSliderInput(session, "max.iter", value = examples$Scenario3$max.iter) 
+      updateSliderInput(session, "phi", value = examples$Scenario3$phi) 
+      updateSliderInput(session, "phi1", value = examples$Scenario3$phi1)
+      updateSliderInput(session, "phi2", value = examples$Scenario3$phi2)
+      updateSliderInput(session, "startx1", value = examples$Scenario3$startx1)
+      updateSliderInput(session, "startx2", value = examples$Scenario3$startx2)
+    }, priority = -1)
+
   observe({
 
     req(input$fun, input$method, input$step.size, input$max.iter, input$phi, input$phi1, input$phi2)
-
-    if (is.null(input$examples)) {
 
       Reactives$plot <<- get(input$fun, funData)
       Reactives$fun <<- input$fun
@@ -77,43 +112,30 @@ server <- function(input, output, session){
       Reactives$x1 <<- as.numeric(input$startx1)
       Reactives$x2 <<- as.numeric(input$startx2)
 
-    } else {
-
-      Reactives$plot <<- get(get(input$examples, examples)$fun, funData)
-      Reactives$fun <<- get(input$examples, examples)$fun
-      Reactives$method <<- get(input$examples, examples)$method
-      Reactives$step.size <<- get(input$examples, examples)$step.size
-      Reactives$max.iter <<- get(input$examples, examples)$max.iter
-      Reactives$phi <<- get(input$examples, examples)$phi
-      Reactives$phi1 <<- get(input$examples, examples)$phi1
-      Reactives$phi2 <<- get(input$examples, examples)$phi2
-      Reactives$x1 <<- as.numeric(get(input$examples, examples)$startx1)
-      Reactives$x2 <<- as.numeric(get(input$examples, examples)$startx2)
-    }
-  })
+  }, priority = 2)
 
   observe({
 
-      output$x1coords = renderUI({ sliderInput("startx1", HTML("Choose Start Point &theta;<sub>1</sub>"),
+    output$fun = renderUI({selectInput("fun", "Choose Objective Function",
+                                        choices = funNames, selected = if (is.null(input$examples)) {
+                                                              "Ackley2d"
+                                                              } else {
+                                                                Reactives$fun
+                                                              }
+                                        )})
+
+    output$x1coords = renderUI({ sliderInput("startx1", HTML("Choose Start Point &theta;<sub>1</sub>"),
                                           min = get(Reactives$fun, xValues)[1],
                                           max = get(Reactives$fun, xValues)[3],
                                           step = 0.01,
-                                          value = if (is.null(input$examples)) {
-                                            get(Reactives$fun, xValues)[1]
-                                          } else {
-                                            Reactives$x1
-                                          }
+                                          value = Reactives$x1
                                         )})
 
   output$x2coords = renderUI({ sliderInput("startx2", HTML("Choose Start Point &theta;<sub>2</sub>"),
                                            min = get(Reactives$fun, xValues)[2],
                                            max = get(Reactives$fun, xValues)[4],
                                            step = 0.01,
-                                           value = if (is.null(input$examples)) {
-                                             get(Reactives$fun, xValues)[2]
-                                           } else {
-                                             Reactives$x2
-                                           }
+                                           value = Reactives$x2
                                           )})
 
   output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
@@ -126,13 +148,6 @@ server <- function(input, output, session){
                                                             }
                                               )})
 
-  output$fun = renderUI({selectInput("fun", "Choose Objective Function",
-                                      choices = funNames, selected = if (is.null(input$examples)) {
-                                                            "Ackley2d"
-                                                            } else {
-                                                              Reactives$fun
-                                                            }
-                                      )})
 
   output$step.size = renderUI({sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
                                            min = 0, max = 1, step = 0.001,
@@ -144,7 +159,7 @@ server <- function(input, output, session){
                                              )})
 
   output$max.iter = renderUI({sliderInput("max.iter", "Max. iterations T (all optimizers):",
-                                          min = 0, max = 10000, step = 1,
+                                          min = 0, max = 2000, step = 1,
                                           value = if (is.null(input$examples)) {
                                                       10
                                             } else {
@@ -172,15 +187,14 @@ server <- function(input, output, session){
 
   output$phi2 = renderUI({sliderInput("phi2", HTML("Decay Rate &rho;<sub>2</sub> (Adam):"),
                                       min = 0, max = 1, step=0.05,
-                                      value= if (is.null(input$examples)) {
+                                      value = if (is.null(input$examples)) {
                                         0.95
                                       } else {
                                         Reactives$phi2
                                       }
   )})
 
-
-  }, priority = 2)
+  }, priority = 1)
 
   # observe({
   #   Reactives$phi1 <<- input$phi1
@@ -235,7 +249,7 @@ server <- function(input, output, session){
                             plot2d(Reactives$plot, get(Reactives$fun, xValues)[1], get(Reactives$fun, xValues)[3],
                                    get(Reactives$fun, xValues)[2], get(Reactives$fun, xValues)[4],
                                    trueOpt = c(as.numeric(get(Reactives$fun, opt)[1]), as.numeric(get(Reactives$fun, opt)[2])),
-                                    xmat = Reactives$results)
+                                    xmat = Reactives$results, algoName = Reactives$method)
                             })
 
         }, priority = 0)
