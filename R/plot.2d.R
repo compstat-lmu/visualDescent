@@ -49,10 +49,6 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, tr
 
     if (!is.null(trueOpt)) plot.dfOpt = data.frame(x1 = trueOpt[1], x2 = trueOpt[2])
 
-  new_scale <- function(new_aes) {
-     structure(ggplot2::standardise_aes_names(new_aes), class = "new_aes")
-  }
-
   # Generate grid with specfied dimensions and data.frame for plot
   x1 = seq(x1.lower, x1.upper, length.out = n.x)
   x2 = seq(x2.lower, x2.upper, length.out = n.x)

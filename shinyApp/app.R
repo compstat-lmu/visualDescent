@@ -13,22 +13,26 @@ opt = lapply(funData, function(x) {x1 = getGlobalOptimum(x)$param[1]
 
 examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step.size = 0.002, max.iter = 200,
                                  phi = 0.9, phi1 = 0, phi2 = 0, fun = c("StyblinkskiTang"), startx1 = 5, startx2 = -5),
-                Scenario2 = list(method = c("GradientDescent", "Momentum"), step.size = 0.434, max.iter = 10,
-                                 phi = 0.15, phi1 = 0, phi2 = 0, fun = c("Paraboloid"), startx1 = - 20, startx2 = -20),
-                Scenario3 = list(method = c("Adam", "AdaGrad", "GradientDescent", "Momentum"), step.size = 0.451, max.iter = 35,
-                                 phi = 0.2, phi1 = 0.75, phi2 = 0.65, fun = c("Paraboloid"), startx1 = - 20, startx2 = -20))
+                Scenario2 = list(method = c("GradientDescent", "Momentum"), step.size = 0.018, max.iter = 200,
+                                 phi = 0.15, phi1 = 0, phi2 = 0, fun = c("Paraboloid"), startx1 = - 5, startx2 = - 5),
+                Scenario3 = list(method = c("Adam", "AdaGrad", "GradientDescent", "Momentum"), step.size = 0.018, max.iter = 200,
+                                 phi = 0.2, phi1 = 0.75, phi2 = 0.65, fun = c("Paraboloid"), startx1 = - 5, startx2 = -5))
   
 
 ui <- fluidPage(
         fluidRow(
         column(3,
+                        h4("Option A: See example optimization runs:", align= "left"),
+                        h6("Example 1: Convergence of GD with and without momentum for an ill-conditioned function", align= "left"),
                         actionButton("example1", "Example 1"),
+                        h6("Example 2: Convergence of GD, Momentum, Adagrad and Adam for an ill-conditioned function", align= "left"),
                         actionButton("example2", "Example 2"),
-                        actionButton("example3", "Example 3"),
+                        h6("Example 3: GD with and without momentum: Capability of escaping local minima", align= "left"),
+                        actionButton("example3", "Example 3")),
 
                         # checkboxGroupInput("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
-
-                        #                                        "Scenario3")),
+        column(3, 
+                        h4("Option B: Play around", align= "left"),
                         uiOutput("fun"),
                         uiOutput("method"),
                         uiOutput("x1coords"),
@@ -39,16 +43,16 @@ ui <- fluidPage(
                         uiOutput("phi1"),
                         uiOutput("phi2")),
 
-        column(6,
+        column(5,
                 mainPanel(
                   # h3("Steps optimization procedure", align= "center"),
-                  plotOutput("plot", width = "800px", height = "500px"))),
+                  plotOutput("plot", width = "700px", height = "400px")))
 
-        column(9,
-               mainPanel(
-                 # h3("Algorithms", align = "center"),
-                 img(src = "algorithms.png", height = 400, width = 700)
-               ))
+        # column(9,
+        #        mainPanel(
+        #          # h3("Algorithms", align = "center"),
+        #          img(src = "algorithms.png", height = 400, width = 700)
+        #        ))
         ))
 
 
@@ -68,12 +72,12 @@ server <- function(input, output, session){
       updateSliderInput(session, "phi2", value = examples$Scenario1$phi2)
       updateSliderInput(session, "startx1", value = examples$Scenario1$startx1)
       updateSliderInput(session, "startx2", value = examples$Scenario1$startx2)
-      updateSelectInput(session, "fun", label = examples$Scenario1$fun, selected = examples$Scenario1$fun)
+      updateSelectInput(session, "fun", selected = examples$Scenario1$fun)
     }, priority = 3)
 
   observeEvent(
     input$example1, {
-      updateSelectInput(session, "fun", label = examples$Scenario2$fun, selected = examples$Scenario2$fun)
+      updateSelectInput(session, "fun", selected = examples$Scenario2$fun)
       updateCheckboxInput(session, "method", value = examples$Scenario2$method) 
       updateSliderInput(session, "step.size", value = examples$Scenario2$step.size) 
       updateSliderInput(session, "max.iter", value = examples$Scenario2$max.iter) 
@@ -86,7 +90,7 @@ server <- function(input, output, session){
 
   observeEvent(
     input$example2, {
-      updateSelectInput(session, "fun", label = examples$Scenario3$fun, selected = examples$Scenario3$fun)
+      updateSelectInput(session, "fun", selected = examples$Scenario3$fun)
       updateCheckboxInput(session, "method", value = examples$Scenario3$method) 
       updateSliderInput(session, "step.size", value = examples$Scenario3$step.size) 
       updateSliderInput(session, "max.iter", value = examples$Scenario3$max.iter) 
@@ -159,7 +163,7 @@ server <- function(input, output, session){
 
 
   output$step.size = renderUI({sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
-                                           min = 0, max = 1, step = 0.001,
+                                           min = 0, max = 0.5, step = 0.001,
                                            value =  if (is.null(input$step.size)) {
                                                       0.01
                                            } else {
