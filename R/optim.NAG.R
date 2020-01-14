@@ -1,6 +1,6 @@
-#' Optimize mathematical function using gradient descent with momentum
+#' Optimize mathematical function using Nesterov Accelerated Gradient (NAG)
 #'
-#' This functions uses the gradient descent algorithm with momentum to find
+#' This functions uses the Nesterov Accelerated Gradient (NAG) to find
 #' the minimum of a (multi-) dimensional mathematical function. The parameter
 #' 'phi' controls for the weight of prior gradients thus indirectly steering
 #' the velocity of the algorithm.
@@ -16,7 +16,7 @@
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.5, stop.grad = .Machine$double.eps) {
+NAG = function(f, x0, max.iter = 100, step.size = 0.001, phi = 0.8, stop.grad = .Machine$double.eps) {
 
   if (!is.function(f)) stop("f is not a function")
   if (is.na(f(x0))) stop("Dimensions of function and start point x0 do not match")
@@ -31,19 +31,11 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
 
   for (i in 2:max.iter){
 
-    tryCatch({
     #Calculate gradient from prior point
-    nabla = grad(f, theta[1:length(x0), i-1])
-    },
-    error = function(contd){
+    nabla = grad(f, theta[1:length(x0), i-1]- phi*mu0)
 
-      message(c("Error gradDescentMomentum: Error in gradient calculation. Please choose different set of parameters.",
-                "Often a smaller step size fixes this issue."))
-
-    })
     #Calculate mu
     mu1 = phi*mu0 - step.size*nabla
-
 
     #Check if stop-criterion already reached
     if(all(abs(nabla) < stop.grad)){
@@ -64,5 +56,5 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
   names(out) = paste0("x", 1:(ncol(out)))
   out = cbind(out, y = theta[length(x0)+1, ])
 
-  return(list(algorithm = "Momentum method", results = out, niter = i, optimfun = f))
+  return(list(algorithm = "Nesterov accelerated gradient (NAG)", results = out, niter = i, optimfun = f))
 }

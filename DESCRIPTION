@@ -18,6 +18,7 @@ Depends:
     ggplot2,
     rmarkdown,
     numDeriv,
+    plotly,
     RColorBrewer,
     reshape2,
     smoof,

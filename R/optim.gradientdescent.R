@@ -21,9 +21,16 @@ gradDescent = function(f, x0, max.iter = 100, step.size = 0.001, stop.grad = .Ma
 
     for (i in 2:max.iter){
 
-      #Calculate gradient at current point
-      nabla = grad(f, theta[1:length(x0), i-1])
+      tryCatch({
 
+      nabla = grad(f, theta[1:length(x0), i-1])
+      },
+      error = function(contd){
+
+        message(c("Error GradDescent: Error in gradient calculation. Please choose different set of parameters.",
+                "Often a smaller step size fixes this issue."))
+
+      })
       #Check if stop-criterion already reached
       if (all(abs(nabla) < stop.grad)) {
         i = i-1

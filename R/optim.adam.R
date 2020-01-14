@@ -17,7 +17,7 @@
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-adam = function(f, x0, max.iter = 100, step.size = 0.01, phi1 = 0.5, phi2 = 0.8, stop.grad = .Machine$double.eps){
+adam = function(f, x0, max.iter = 100, step.size = 0.1, phi1 = 0.5, phi2 = 0.8, stop.grad = .Machine$double.eps){
 
   if (!is.function(f)) stop("f is not a function")
   if (is.na(f(x0))) stop("Dimensions of function and starting point x0 do not match")
