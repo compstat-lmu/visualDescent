@@ -4,8 +4,14 @@
 \alias{gradDescentMomentum}
 \title{Optimize mathematical function using gradient descent with momentum}
 \usage{
-gradDescentMomentum(f, x0, max.iter = 100, step.size = 0.01,
-  phi = 0.5, stop.grad = .Machine$double.eps)
+gradDescentMomentum(
+  f,
+  x0,
+  max.iter = 100,
+  step.size = 0.01,
+  phi = 0.5,
+  stop.grad = .Machine$double.eps
+)
 }
 \arguments{
 \item{f}{a (multi-) dimensional function to be eptimized.}

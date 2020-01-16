@@ -4,8 +4,13 @@
 \alias{adaGrad}
 \title{Optimize mathematical function using the AdaGrad algorithm}
 \usage{
-adaGrad(f, x0, max.iter = 100, step.size = 0.01,
-  stop.grad = .Machine$double.eps)
+adaGrad(
+  f,
+  x0,
+  max.iter = 100,
+  step.size = 0.1,
+  stop.grad = .Machine$double.eps
+)
 }
 \arguments{
 \item{f}{a (slti-) dimensional function to be eptimized.}

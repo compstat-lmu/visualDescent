@@ -4,8 +4,15 @@
 \alias{adam}
 \title{Optimize mathematical function using the Adam algorithm}
 \usage{
-adam(f, x0, max.iter = 100, step.size = 0.01, phi1 = 0.5,
-  phi2 = 0.8, stop.grad = .Machine$double.eps)
+adam(
+  f,
+  x0,
+  max.iter = 100,
+  step.size = 0.1,
+  phi1 = 0.5,
+  phi2 = 0.8,
+  stop.grad = .Machine$double.eps
+)
 }
 \arguments{
 \item{f}{a (multi-) dimensional function to be eptimized.}
