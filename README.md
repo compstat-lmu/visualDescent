@@ -77,6 +77,22 @@ updated in realtime.
 
 [R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
 
+# Adding customized functions to existing 'funData'
+To add a new function we use 'makeSingleObjectiveFunction()' from the package 'smoof'.
+Suppose we would like to add the paraboloid function known as f(x) = a*x^2+b*x^2 where a,b are
+chosen fixed constants we can do so by defining
+
+```r
+paraboloid = makeSingleObjectiveFunction(name = "Paraboloid", fn = function(x) 2*x[1]^2 + 50*x[2]^2, par.set = makeParamSet(
+    makeNumericParam("x1", lower = -5, upper = 5),
+    makeNumericParam("x2", lower = -5, upper = 5)), global.opt.params = list(x1 = 0, x2 = 0), global.opt.value = 0)
+```
+In this example we define a name ("Paraboloid"), the function ("fn") with constant a = 2, b = 50 in our example and the lower and upper bounds -5, 5. Besides that we can define the global optimum parameters (global.opt.params) which is needed to be able to display the loss plot in the optimization procedure. 
+
+For any further parameters use the help page (i.e. '?makeSingleObjectiveFunktion') or the package documentation under https://cran.r-project.org/web/packages/smoof/smoof.pdf 
+
+
+
 
 
 
