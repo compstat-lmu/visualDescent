@@ -21,6 +21,7 @@ Depends:
     plotly,
     RColorBrewer,
     reshape2,
+    shiny,
     smoof,
     stringr,
     ggnewscale
