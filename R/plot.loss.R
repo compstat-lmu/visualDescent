@@ -36,11 +36,19 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
     algoName = as.list(paste0("AlgoAutoFill", 1:length(xmat)))
   }
 
+
   if (!is.null(trueOptZ)) {
+    print(trueOptZ)
     plot.dfOpt = data.frame(z = trueOptZ)
   } else {
+    if (!is.null(getGlobalOptimum(f)$value)) {
     plot.dfOpt = data.frame(z = getGlobalOptimum(f)$value)
+    } else {
+    stop("To plot Loss minimum needs to be specified. Make sure the provided function has a specified global minimum")
+    }
   }
+
+
 
   nresults = length(xmat)
   col = c("black", "red", "blue", "green")

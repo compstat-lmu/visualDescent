@@ -13,19 +13,19 @@
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-gradDescent = function(f, x0, max.iter = 100, step.size = 0.001, stop.grad = .Machine$double.eps){
+gradDescent = function(f, x0, max.iter = 100, step.size = 0.001, stop.grad = .Machine$double.eps) {
 
     theta = matrix(0, nrow = (length(x0)+1), ncol = max.iter)
     theta[1:length(x0), 1] = x0
     theta[length(x0)+1, 1] = f(x0)
 
-    for (i in 2:max.iter){
+    for (i in 2:max.iter) {
 
       tryCatch({
 
       nabla = grad(f, theta[1:length(x0), i-1])
       },
-      error = function(contd){
+      error = function(contd) {
 
         message(c("Error GradDescent: Error in gradient calculation. Please choose different set of parameters.",
                 "Often a smaller step size fixes this issue."))
