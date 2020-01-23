@@ -74,8 +74,14 @@ Under the following link you can find a demo of the optimization algorithms with
 optimization functions. All important parameters of the optimization can be controlled and
 updated in realtime.
 
-
 [R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
+
+As an alternative you can deploy the app on your local machine via the following function
+
+```r
+runAppLocal()
+```
+
 
 # Adding customized functions to existing 'funData'
 To add a new function we use 'makeSingleObjectiveFunction()' from the package 'smoof'.
