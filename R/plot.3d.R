@@ -17,12 +17,14 @@
 #' @param algoNamw list of strings with names of algorithms. Length must equal length of 'xmat'.
 
 
-plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, trueOpt = NULL, algoName = NULL) {
+plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, trueOpt = NULL, algoName = NULL,
+                  optimError = FALSE) {
 
   # Check several input parameter
   if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
   if (checkList(algoName) == FALSE) stop("'algoName' must be a list object")
   if (!is.null(trueOpt) & !is.numeric(trueOpt)) stop("provided true optimum must be a numeric vector")
+  if(optimError == TRUE) stop("Error in plot3d: error occured in optimization. Please specify different set of parameters.")
   if (length(xmat) > length(algoName) && !is.null(algoName)) {
     print("unsufficient names provides: outstanding instances autofilled")
     algoName = as.list(unlist(algoName), paste0("AlgoAutoFill", (length(xmat) - length(algoName)):length(xmat)))

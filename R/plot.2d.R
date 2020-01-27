@@ -19,14 +19,17 @@
 #' @param xmat an object of class list containing the results of the algorithm.
 #' @param trueOpt is a numeric vector of the true optimum of the function.
 #' @param algoNamw list of strings with names of algorithms. Length must equal length of 'xmat'.
+#' @param optimError passed argument from optimization. Specifies if error in gradient occured.
 #'
 #' @export
-plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, trueOpt = NULL, algoName = NULL, plotSegments = FALSE) {
+plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xmat, trueOpt = NULL, algoName = NULL, plotSegments = FALSE,
+                  optimError = FALSE) {
 
   # Check several input parameter
   if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
   if (checkList(algoName) == FALSE) stop("'algoName' must be a list object")
   if (!is.null(trueOpt) & !is.numeric(trueOpt)) stop("provided true optimum must be a numeric vector")
+  if(optimError == TRUE) stop("Error in plot2d: error occured in optimization. Please specify different set of parameters.")
   if (length(xmat) > length(algoName) && !is.null(algoName)) {
     warning("unsufficient names provides: outstanding instances autofilled")
     algoName = as.list(unlist(algoName), paste0("AlgoAutoFill", (length(xmat) - length(algoName)):length(xmat)))

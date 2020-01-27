@@ -13,7 +13,8 @@ plot3d(
   n.x = 100L,
   xmat,
   trueOpt = NULL,
-  algoName = NULL
+  algoName = NULL,
+  optimError = FALSE
 )
 }
 \arguments{

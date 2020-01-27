@@ -12,7 +12,8 @@ plotLoss(
   x2.upper,
   xmat,
   trueOptZ = NULL,
-  algoName = NULL
+  algoName = NULL,
+  optimError = FALSE
 )
 }
 \arguments{
@@ -31,6 +32,8 @@ plotLoss(
 \item{trueOptZ}{is a numeric of the z coordinate of the true optimum.}
 
 \item{algoName}{list of strings with names of algorithms. Length must equal length of 'xmat'.}
+
+\item{optimError}{passed argument from optimization. Specifies if error in gradient occured.}
 
 \item{n.x}{the number (equidistant) points at which f is evaluated w.r.t x1 and x2 coordinate.}
 }

@@ -18,13 +18,15 @@
 #' @param xmat an object of class list containing the results of the algorithm.
 #' @param trueOptZ is a numeric of the z coordinate of the true optimum.
 #' @param algoName list of strings with names of algorithms. Length must equal length of 'xmat'.
+#' @param optimError passed argument from optimization. Specifies if error in gradient occured.
 #'
 #' @export
-plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = NULL, algoName = NULL) {
+plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = NULL, algoName = NULL,  optimError = FALSE) {
 
   # Check several input parameter
   if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
   if (checkList(algoName) == FALSE) stop("'algoName' must be a list object")
+  if(optimError == TRUE) stop("Error in plotLoss: error occured in optimization. Please specify different set of parameters.")
 
   # Check if lower and upper bounds customized, else set to box constraints
   if (missing(x1.lower)) x1.lower = getLowerBoxConstraints(f)[1]
@@ -42,12 +44,11 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
     plot.dfOpt = data.frame(z = trueOptZ)
   } else {
     if (!is.null(getGlobalOptimum(f)$value)) {
-    plot.dfOpt = data.frame(z = getGlobalOptimum(f)$value)
+      plot.dfOpt = data.frame(z = getGlobalOptimum(f)$value)
     } else {
-    stop("To plot Loss minimum needs to be specified. Make sure the provided function has a specified global minimum")
+      stop("To plot Loss minimum needs to be specified. Make sure the provided function has a specified global minimum")
     }
   }
-
 
 
   nresults = length(xmat)
@@ -63,13 +64,13 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
   plot.df = do.call(rbind, plot.df)
 
   plot = ggplot(plot.df, aes(x = iter, y = loss, color = algo)) +
-          geom_path() +
-          ggtitle("Loss to optimum") +
-          xlab("Iteration") +
-          ylab("Loss") +
-          theme(legend.title = element_blank()) +
-          theme(plot.title = element_text(hjust = .5))
-          #theme(panel.background = element_rect(fill = 'white', colour = 'black'))
+    geom_path() +
+    ggtitle("Loss to optimum") +
+    xlab("Iteration") +
+    ylab("Loss") +
+    theme(legend.title = element_blank()) +
+    theme(plot.title = element_text(hjust = .5))
+  #theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 
   return(plot)
 

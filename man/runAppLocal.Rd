@@ -7,5 +7,7 @@
 runAppLocal()
 }
 \description{
-Run Shiny App on local machine
+This function helps to deploy the shiny app in an easy way
+on the local machine. As alternativ you can use the app
+deployed on the server which can be found in the Git repo.
 }

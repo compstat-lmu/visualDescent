@@ -22,6 +22,7 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
   if (is.na(f(x0))) stop("Dimensions of function and start point x0 do not match")
   if ( (phi<0) | (phi>1)) stop("phi must be element [0,1]")
 
+  errorObs = logical(1L)
   theta = matrix(0, nrow = (length(x0)+1), ncol = max.iter)
   theta[1:length(x0), 1] = x0
   theta[length(x0)+1, 1] = f(x0)
@@ -35,12 +36,16 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
     #Calculate gradient from prior point
     nabla = grad(f, theta[1:length(x0), i-1])
     },
-    error = function(contd){
+  error = function(contd) {
 
-      message(c("Error gradDescentMomentum: Error in gradient calculation. Please choose different set of parameters.",
+    errorObs <<- TRUE
+
+  }, finally = {
+    if (errorObs == TRUE) {
+      warning(c("Error GradDescentMomentum: Error in gradient calculation. Please choose different set of parameters.",
                 "Often a smaller step size fixes this issue."))
-
-    })
+    }
+  })
     #Calculate mu
     mu1 = phi*mu0 - step.size*nabla
 
@@ -64,5 +69,5 @@ gradDescentMomentum = function(f, x0, max.iter = 100, step.size = 0.01, phi = 0.
   names(out) = paste0("x", 1:(ncol(out)))
   out = cbind(out, y = theta[length(x0)+1, ])
 
-  return(list(algorithm = "Momentum method", results = out, niter = i, optimfun = f))
+  return(list(algorithm = "Momentum method", results = out, niter = i, optimfun = f, errorOccured = errorObs))
 }

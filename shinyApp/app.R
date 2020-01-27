@@ -56,6 +56,7 @@ ui <- fluidPage(
         column(5,
                 mainPanel(
                   # h3("Steps optimization procedure", align= "center"),
+                  textOutput("text"),
                   plotOutput("plotLoss", width = "650px", height = "350px"),
                   plotOutput("plot2d", width = "650px", height = "350px"),
                   plotlyOutput("plot3d", width = "650px", height = "350px")))
@@ -68,6 +69,7 @@ server <- function(input, output, session){
 
 
   Reactives = reactiveValues()
+
 
   observeEvent(
     input$example1, {
@@ -121,6 +123,7 @@ server <- function(input, output, session){
       updateSelectInput(session, "fun", selected = examples$Scenario4$fun)
     })
 
+
   observe({
 
     req(input$fun, input$method, input$step.size, input$max.iter, input$phi, input$phi1, input$phi2)
@@ -138,7 +141,12 @@ server <- function(input, output, session){
 
   })
 
+  # plot = reactive({
+  #   get(input$fun, funData)
+  # })
+
   observe({
+
   output$fun = renderUI({selectInput("fun", "Choose Objective Function",
                                       choices = funNames, selected = if (is.null(input$examples)) {
                                                             "Ackley2d"
@@ -226,81 +234,128 @@ server <- function(input, output, session){
                                       }
   )})
 
-  }, priority = 2)
+ })
+
+
 
 
   observeEvent(input$run, {
-    req(Reactives$plot, Reactives$x1, Reactives$x2, Reactives$step.size, Reactives$max.iter,
-        Reactives$method, Reactives$phi1, Reactives$phi2, Reactives$fun)
 
-    if ("GradientDescent" %in% Reactives$method) {
-      resultsGD = gradDescent(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = Reactives$step.size,
-                                      max.iter = Reactives$max.iter)$results
+    plot = isolate(get(input$fun, funData))
+    x1 = isolate(input$startx1)
+    x2 = isolate(input$startx2)
+    step.size = isolate(input$step.size)
+    max.iter = isolate(input$max.iter)
+    method = isolate(input$method)
+    phi = isolate(input$phi)
+    phi1 = isolate(input$phi1)
+    phi2 = isolate(input$phi2)
+    fun = isolate(input$fun)
+
+    # output$text = renderText({
+    #   c(x1, x2)
+    # })
+
+    if ("GradientDescent" %in% method) {
+      res = gradDescent(plot, c(x1, x2), step.size = step.size,
+                                      max.iter = max.iter)
+      resultsGD = res$results
+      errorGD = res$errorOccured
+
     } else {
       resultsGD = c(0,0,0)
+      errorGD = FALSE
     }
 
-    if ("Momentum" %in% Reactives$method) {
-      resultsMomentum = gradDescentMomentum(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = Reactives$step.size,
-                                                    max.iter = Reactives$max.iter, phi = Reactives$phi)$results
+    if ("Momentum" %in% method) {
+      res = gradDescentMomentum(plot, c(x1, x2), step.size = step.size,
+                                                    max.iter = max.iter, phi = phi)
+      resultsMomentum = res$results
+      errorMomentum = res$errorOccured
+
     } else {
       resultsMomentum = c(0,0,0)
+      errorMomentum = FALSE
     }
 
-    if ("AdaGrad" %in% input$method) {
-    resultsAdaGrad = adaGrad(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-                             max.iter = input$max.iter)$results
+    if ("AdaGrad" %in% method) {
+    res = adaGrad(plot, c(x1, x2), step.size = step.size,
+                             max.iter = max.iter)
+    resultsAdaGrad = res$results
+    errorAdaGrad = res$errorOccured
+
     } else {
       resultsAdaGrad = c(0,0,0)
+      errorAdaGrad = FALSE
+
     }
 
-    if ("Adam" %in% input$method) {
-      resultsAdam = adam(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-                       max.iter = input$max.iter, phi1 = Reactives$phi1, phi2 = Reactives$phi2)$results
+    if ("Adam" %in% method) {
+      res = adam(plot, c(x1, x2), step.size = step.size,
+                       max.iter = max.iter, phi1 = phi1, phi2 = phi2)
+    resultsAdam = res$results
+    errorAdam = res$errorOccured
+
     } else {
       resultsAdam = c(0,0,0)
+      errorAdam = FALSE
     }
-    if ("RMS" %in% input$method) {
-      resultsRMS = RMSprop(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-                         max.iter = input$max.iter)$results
+    if ("RMS" %in% method) {
+      res = RMSprop(plot, c(x1, x2), step.size = step.size,
+                         max.iter = max.iter)
+      resultsRMS = res$results
+      errorRMS = res$errorOccured
+
     } else {
       resultsRMS = c(0,0,0)
+      errorRMS = res$errorOccured
     }
-    if ("NAG" %in% input$method) {
-      resultsNAG = NAG(Reactives$plot, c(Reactives$x1, Reactives$x2), step.size = input$step.size,
-                           max.iter = input$max.iter, phi = Reactives$phi)$results
+    if ("NAG" %in% method) {
+      res = NAG(plot, c(x1, x2), step.size = step.size,
+                           max.iter = max.iter, phi = phi)
+      resultsNAG = res$results
+
     } else {
       resultsNAG = c(0,0,0)
+      errorNAG = res$errorOccured
     }
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam,
                    RMS = resultsRMS, NAG = resultsNAG)
-    Reactives$results = results[input$method]
+    errors = list(GradientDescent = errorGD, Momentum = errorMomentum, AdaGrad = errorAdaGrad, Adam = errorAdam,
+                  RMS = errorRMS, NAG = errorNAG)
+    results = results[method]
+    errors = get(method, errors)
 
-  })
 
-  observeEvent(input$run, {
 
-            req(Reactives$results, Reactives$fun)
+  # # })
+  # #
+  # # observeEvent(input$run, {
+  # #
+  # #           req(Reactives$results, input$fun)
+  # #           results = isolate(Reactive$results)
+  # #           fun = isolate(input$fun)
+  #
 
             output$plot2d = renderPlot({
 
-                            plot2d(Reactives$plot, get(input$fun, xValues)[1], get(input$fun, xValues)[3],
-                                   get(input$fun, xValues)[2], get(input$fun, xValues)[4],
-                                   trueOpt = c(as.numeric(get(Reactives$fun, opt)$x1), as.numeric(get(Reactives$fun, opt)$x2)),
-                                    xmat = Reactives$results, algoName = Reactives$method)
+                            plot2d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                                   get(fun, xValues)[2], get(fun, xValues)[4],
+                                   trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
+                                    xmat = results, algoName = method, optimError = errors)
                             })
             output$plotLoss = renderPlot({
-                            plotLoss(Reactives$plot, get(input$fun, xValues)[1], get(input$fun, xValues)[3],
-                                     get(input$fun, xValues)[2], get(input$fun, xValues)[4],
-                                     xmat = as.list(Reactives$results),
-                                     algoName = as.list(Reactives$method))
+                                    plotLoss(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                                     get(fun, xValues)[2], get(fun, xValues)[4],
+                                     xmat = as.list(results), algoName = as.list(method),
+                                     optimError = errors)
 
                             })
             output$plot3d = renderPlotly({
-              plot3d(Reactives$plot, get(input$fun, xValues)[1], get(input$fun, xValues)[3],
-                              get(input$fun, xValues)[2], get(input$fun, xValues)[4],
-                              trueOpt = c(as.numeric(get(Reactives$fun, opt)$x1), as.numeric(get(Reactives$fun, opt)$x2)),
-                              xmat = Reactives$results, algoName = Reactives$method)
+              plot3d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                              get(fun, xValues)[2], get(fun, xValues)[4],
+                              trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
+                              xmat = results, algoName = method, optimError = errors)
                             })
 
         })

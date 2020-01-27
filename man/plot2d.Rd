@@ -14,7 +14,8 @@ plot2d(
   xmat,
   trueOpt = NULL,
   algoName = NULL,
-  plotSegments = FALSE
+  plotSegments = FALSE,
+  optimError = FALSE
 )
 }
 \arguments{
@@ -33,6 +34,8 @@ plot2d(
 \item{xmat}{an object of class list containing the results of the algorithm.}
 
 \item{trueOpt}{is a numeric vector of the true optimum of the function.}
+
+\item{optimError}{passed argument from optimization. Specifies if error in gradient occured.}
 
 \item{algoNamw}{list of strings with names of algorithms. Length must equal length of 'xmat'.}
 }

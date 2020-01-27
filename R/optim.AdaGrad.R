@@ -22,6 +22,7 @@ adaGrad = function(f, x0, max.iter = 100, step.size = 0.1, stop.grad = .Machine$
   if (is.na(f(x0))) stop("Dimensions of function and starting point x0 do not match")
 
   #Initialize theta matrix and default parameter
+  errorObs =logical(1L)
   theta = matrix(0, nrow = (length(x0)+2), ncol = max.iter)
   theta[1:length(x0), 1] = x0
   theta[length(x0)+1, 1] = f(x0)
@@ -31,9 +32,21 @@ adaGrad = function(f, x0, max.iter = 100, step.size = 0.1, stop.grad = .Machine$
 
   for (i in 2:max.iter) {
 
+    try = tryCatch({
     #Calculate gradient
     nabla = grad(f, theta[1:length(x0), i-1])
 
+    },
+    error = function(contd) {
+
+      errorObs <<- TRUE
+
+    }, finally = {
+      if (errorObs == TRUE) {
+        warning(c("Error adaGrad: Error in gradient calculation. Please choose different set of parameters.",
+                  "Often a smaller step size fixes this issue."))
+      }
+    })
     for (j in 1:length(x0)) {
 
     #Calculate s for j-th dimension
@@ -59,5 +72,5 @@ adaGrad = function(f, x0, max.iter = 100, step.size = 0.1, stop.grad = .Machine$
   names(out) = paste0("x", 1:(ncol(out)))
   out = cbind(out, y = theta[length(x0)+1, ])
 
-  return(list(algorithm = "AdaGrad", results = out, niter = i, optimfun = f))
+  return(list(algorithm = "AdaGrad", results = out, niter = i, optimfun = f, errorOccured = errorObs))
 }
