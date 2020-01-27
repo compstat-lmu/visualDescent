@@ -27,7 +27,8 @@ examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step
 
 
 ui <- fluidPage(
-        actionButton("run", "Update Window"),
+        actionButton("run", "Update Window", icon("paper-plane"),
+                     style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
         fluidRow(
         column(3,
                         h4("Option A: See example optimization runs:", align= "left"),
