@@ -16,7 +16,8 @@
 #' @param xmat an object of class list containing the results of the algorithm.
 #' @param trueOpt is a numeric vector of the true optimum of the function.
 #' @param algoNamw list of strings with names of algorithms. Length must equal length of 'xmat'.
-
+#'
+#' @export
 
 plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, trueOpt = NULL, algoName = NULL,
                   optimError = FALSE) {
