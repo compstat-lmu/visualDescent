@@ -4,6 +4,7 @@
 #' The default upper and lower bounds for the plot are set by the box constraints of the
 #' respective optimization function.
 #'
+#' @import checkmate
 #' @import plotly
 #'
 #' @param f a (multi-) dimensional function to be eptimized.
