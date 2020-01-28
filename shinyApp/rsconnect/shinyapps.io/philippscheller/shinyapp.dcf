@@ -5,8 +5,8 @@ account: philippscheller
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1412509
-bundleId: 2758825
+bundleId: 2759204
 url: https://philippscheller.shinyapps.io/shinyapp/
-when: 1580229142.22396
+when: 1580240973.14383
 asMultiple: FALSE
 asStatic: FALSE
