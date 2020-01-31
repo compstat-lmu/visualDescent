@@ -17,6 +17,7 @@ Depends:
     checkmate,
     dplyr,
     ggplot2,
+    gridExtra,
     rmarkdown,
     numDeriv,
     plotly,
