@@ -1,8 +1,11 @@
 library(shiny)
 library(visualDescent)
 
-#Define functions
-
+# Define default settings
+# shiny app on server throws same errors as local application. By default this is not true, so the app deployed on server
+# throws a unified error message, i.e. 'error has occured, please contact package author'. To ensure that the errors are also
+# thrown on the server set option to 'FALSE'.
+options(shiny.sanitize.errors = FALSE)
 
 
 # Define general parameters of functions
@@ -16,6 +19,8 @@ opt = lapply(funData, function(x) {y = list(x1 = getGlobalOptimum(x)$param[1],
                                     z = getGlobalOptimum(x)$value)
                                     return(y)})
 
+# Specify examples: this list can be extended. It is important to specify all parameters and set the parameters which
+# are not needed for the optimization to 0 (do not simply drop them).
 examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step.size = 0.002, max.iter = 200,
                                  phi = 0.9, phi1 = 0, phi2 = 0, fun = c("StyblinkskiTang"), startx1 = 5, startx2 = -5),
                 Scenario2 = list(method = c("GradientDescent", "Momentum"), step.size = 0.018, max.iter = 200,
@@ -26,10 +31,18 @@ examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step
                                  phi = 0.5, phi1 = 0, phi2 = 0, fun = c("HyperbolicParaboloid"), startx1 = -5, startx2 = 0))
 
 
+
 ui <- fluidPage(
+
         actionButton("run", "Update Window", icon("paper-plane"),
                      style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
+        actionButton("exportPlot", "Export Plot as png", icon("paper-plane")),
+        textInput("filePath", label = "File path for plot export", value = "Enter file path for saving plots here"),
+        uiOutput("message"),
+
         fluidRow(
+
+# Specify action buttons for the examples. If list of examples (i.e. 'examples') is extended, add another action button here.
         column(3,
                         h4("Option A: See example optimization runs:", align= "left"),
                         h6("Example 1: Convergence of GD with and without momentum for an ill-conditioned function", align= "left"),
@@ -41,7 +54,8 @@ ui <- fluidPage(
                         h6("Example 4: GD with momentum: Terminating in saddle point", align= "left"),
                         actionButton("example4", "Example 4")),
 
-                        # checkboxGroupInput("examples", "Choose Example Configuration (Optional)", choices = c("Scenario1", "Scenario2",
+# Specify slider inputs for playing around. Theses are defined as 'uiOutput' since they need to take on values when the parameters
+# are set by e.g. pre-defined examples. They react to changes in the valiables and are permanently updated.
         column(3,
                         h4("Option B: Play around", align= "left"),
                         uiOutput("fun"),
@@ -54,6 +68,7 @@ ui <- fluidPage(
                         uiOutput("phi1"),
                         uiOutput("phi2")),
 
+# Specify the order of the plots of the application and their repsective size.
         column(5,
                 mainPanel(
                   # h3("Steps optimization procedure", align= "center"),
@@ -70,7 +85,6 @@ server <- function(input, output, session){
 
 
   Reactives = reactiveValues()
-
 
   observeEvent(
     input$example1, {
@@ -142,9 +156,6 @@ server <- function(input, output, session){
 
   })
 
-  # plot = reactive({
-  #   get(input$fun, funData)
-  # })
 
   observe({
 
@@ -338,28 +349,61 @@ server <- function(input, output, session){
   # #           fun = isolate(input$fun)
   #
 
-            output$plot2d = renderPlot({
+            Reactives$plot2d = plot2d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                            get(fun, xValues)[2], get(fun, xValues)[4],
+                            trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
+                            xmat = results, algoName = method, optimError = errors)
 
-                            plot2d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
-                                   get(fun, xValues)[2], get(fun, xValues)[4],
-                                   trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
-                                    xmat = results, algoName = method, optimError = errors)
+            Reactives$plotLoss = plotLoss(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                                get(fun, xValues)[2], get(fun, xValues)[4],
+                                xmat = as.list(results), algoName = as.list(method),
+                                optimError = errors)
+
+            Reactives$plot3d =  plot3d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+                             get(fun, xValues)[2], get(fun, xValues)[4],
+                             trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
+                             xmat = results, algoName = method, optimError = errors)
+
+            Reactives$plotExport = grid.arrange(Reactives$plotLoss, Reactives$plot2d, ncol = 2)
+
+            output$plot2d = renderPlot({
+                            Reactives$plot2d
                             })
             output$plotLoss = renderPlot({
-                                    plotLoss(plot, get(fun, xValues)[1], get(fun, xValues)[3],
-                                     get(fun, xValues)[2], get(fun, xValues)[4],
-                                     xmat = as.list(results), algoName = as.list(method),
-                                     optimError = errors)
-
+                            Reactives$plotLoss
                             })
             output$plot3d = renderPlotly({
-              plot3d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
-                              get(fun, xValues)[2], get(fun, xValues)[4],
-                              trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
-                              xmat = results, algoName = method, optimError = errors)
+                            Reactives$plot3d
                             })
 
         })
+
+  observeEvent(input$exportPlot, {
+
+    errorPath = FALSE
+    tryCatch({
+
+      ggsave(path = input$filePath, filename = "plot.png", plot = Reactives$plotExport, width = 30, height = 12,
+             units = "cm", dpi = 600)
+
+  },
+  error = function(contd) {
+    errorPath <<- TRUE
+  }, finally = {
+    if (errorPath == TRUE) {
+      output$message = renderText({
+        warning(c("File path does not exist. Please make sure path is correctly specified.",
+                  "Note that saving option does only work for local deployed application (i.e. not on server)"))
+      })
+      }
+      else {
+        output$message = renderText({
+          warning(c("File successfully saved"))
+        })
+      }
+    }
+  )
+  })
 }
 
 # Run the application
