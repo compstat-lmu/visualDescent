@@ -1,4 +1,4 @@
-# visualDescend
+# visualDescent
 Visualization of different descent methods including GD, momentum method, AdaGrad.
 
 # Visualization via Shiny App
