@@ -1,10 +1,23 @@
 # visualDescend
-Visualization of different descent methods including GD, momentum method, AdaGrad
+Visualization of different descent methods including GD, momentum method, AdaGrad.
 
-# Installation
+# Visualization via Shiny App
+Under the following link you can find a demo of the optimization algorithms with pre-defined optimization functions. All important parameters of the optimization can be controlled and updated in realtime.
+
+[R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
+
+As an alternative you can deploy the app on your local machine via the following function. Uncommented lines refer to packages that may be necessary to load beforehand. 
+
 ```r
-devtools::install_github("PhilippScheller/visualDescend")
+# library(devtools)
+# library(shiny)
+
+devtools::install_github("compstat-lmu/visualDescent")
+library(visualDescent)
+
+runAppLocal()
 ```
+
 
 # Example - First Steps
 
@@ -69,19 +82,6 @@ plotAdatestfun2 = plot2d(f = optimAdafun2$optimfun, x1.lower = -4, x1.upper = 4,
 plotAdatestfun2
 ```
 
-# Visualization via Shiny App
-Under the following link you can find a demo of the optimization algorithms with pre-defined 
-optimization functions. All important parameters of the optimization can be controlled and
-updated in realtime.
-
-[R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
-
-As an alternative you can deploy the app on your local machine via the following function
-
-```r
-runAppLocal()
-```
-
 
 # Adding customized functions to existing 'funData'
 To add a new function we use 'makeSingleObjectiveFunction()' from the package 'smoof'.
@@ -96,10 +96,3 @@ paraboloid = makeSingleObjectiveFunction(name = "Paraboloid", fn = function(x) 2
 In this example we define a name ("Paraboloid"), the function ("fn") with constant a = 2, b = 50 in our example and the lower and upper bounds -5, 5. Besides that we can define the global optimum parameters (global.opt.params) which is needed to be able to display the loss plot in the optimization procedure. 
 
 For any further parameters use the help page (i.e. '?makeSingleObjectiveFunktion') or the package documentation under https://cran.r-project.org/web/packages/smoof/smoof.pdf 
-
-
-
-
-
-
-
