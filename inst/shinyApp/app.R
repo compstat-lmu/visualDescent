@@ -1,5 +1,6 @@
-library(shiny)
-library(shinydashboard)
+require(shiny)
+require(shinydashboard)
+require(shinyjs)
 library(visualDescent)
 
 # Define default settings
@@ -38,10 +39,6 @@ ui <- dashboardPage(dashboardHeader(),
 
     actionButton("run", "Update Window", icon("paper-plane"),
       style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
-    actionButton("exportPlot", "Export Plot as png", icon("paper-plane")),
-    textInput("filePath", label = "File path for plot export", value = "Enter file path for saving plots here"),
-    uiOutput("message"),
-
     #fluidRow(
 
       # Specify action buttons for the examples. If list of examples (i.e. 'examples') is extended, add another action button here.
@@ -56,7 +53,8 @@ ui <- dashboardPage(dashboardHeader(),
         # actionButton("example3", "Example 3"),
         # h6("Example 4: GD with momentum: Terminating in saddle point", align= "left"),
         # actionButton("example4", "Example 4")
-    h4("Option A: Predefined Examples", align= "left"),
+    hr(),
+    h4("Opt. A: Predefined Examples", align= "left"),
     selectInput("example", "Choose predefined example",
       choices = list(" " = "null", "Example 1" = "example1", "Example 2" = "example2", "Example 3" = "example3",
         "Example 4" = "example4"), selected = "null", selectize = FALSE)
@@ -64,10 +62,11 @@ ui <- dashboardPage(dashboardHeader(),
     #)
     ,
 
+    hr(),
       # Specify slider inputs for playing around. Theses are defined as 'uiOutput' since they need to take on values when the parameters
       # are set by e.g. pre-defined examples. They react to changes in the valiables and are permanently updated.
     #  column(3,
-        h4("Option B: Play around", align= "left"),
+        h4("Opt. B: Play around", align= "left"),
         uiOutput("fun"),
         uiOutput("method"),
         uiOutput("x1coords"),
@@ -76,25 +75,35 @@ ui <- dashboardPage(dashboardHeader(),
         uiOutput("max.iter"),
         uiOutput("phi"),
         uiOutput("phi1"),
-        uiOutput("phi2")#))
+        uiOutput("phi2"),#))
+
+  hr(),
+  actionButton("exportPlot", "Export Plot as png", icon("paper-plane")),
+  textInput("filePath", label = "File path for plot export", value = "Enter file path for saving plots here"),
+  uiOutput("message")
   ),
   dashboardBody(
-fluidRow(
+#fluidRow(
+    conditionalPanel(condition = "input.run == 0", textOutput("text_update")),
 # Specify the order of the plots of the application and their repsective size.
-        column(5,
-                mainPanel(
+ #       column(5,
+  #              mainPanel(
                   # h3("Steps optimization procedure", align= "center"),
                   textOutput("text"),
                   plotOutput("plotLoss", width = "650px", height = "350px"),
                   plotOutput("plot2d", width = "650px", height = "350px"),
                   plotlyOutput("plot3d", width = "650px", height = "350px")))
 
-        )))
+   #     )))
 
 
 
 server <- function(input, output, session){
 
+  output$text_update <- renderText({
+    "Set (new) selections and commit settings to plot by pressing [Update Window]. The button has to be pushed again in case
+    of any changes in the settings."
+  })
 
   Reactives = reactiveValues()
 
@@ -221,6 +230,15 @@ server <- function(input, output, session){
 
   })
 
+  # observeEvent(input$run, {
+  #   if(input$run == 0){
+  #    # shinyjs::show("text_update", anim = TRUE)
+  #     NULL
+  #   }
+  #   else{
+  #     shinyjs::hide("text_update", animType = "fade")
+  #   }
+  # })
 
   observe({
 
