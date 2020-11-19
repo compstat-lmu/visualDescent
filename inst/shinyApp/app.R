@@ -1,4 +1,5 @@
 library(shiny)
+library(shinydashboard)
 library(visualDescent)
 
 # Define default settings
@@ -32,42 +33,53 @@ examples = list(Scenario1 = list(method = c("GradientDescent", "Momentum"), step
 
 
 
-ui <- fluidPage(
+ui <- dashboardPage(dashboardHeader(),
+  dashboardSidebar(
 
-        actionButton("run", "Update Window", icon("paper-plane"),
-                     style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
-        actionButton("exportPlot", "Export Plot as png", icon("paper-plane")),
-        textInput("filePath", label = "File path for plot export", value = "Enter file path for saving plots here"),
-        uiOutput("message"),
+    actionButton("run", "Update Window", icon("paper-plane"),
+      style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
+    actionButton("exportPlot", "Export Plot as png", icon("paper-plane")),
+    textInput("filePath", label = "File path for plot export", value = "Enter file path for saving plots here"),
+    uiOutput("message"),
 
-        fluidRow(
+    #fluidRow(
 
-# Specify action buttons for the examples. If list of examples (i.e. 'examples') is extended, add another action button here.
-        column(3,
-                        h4("Option A: See example optimization runs:", align= "left"),
-                        h6("Example 1: Convergence of GD with and without momentum for an ill-conditioned function", align= "left"),
-                        actionButton("example1", "Example 1"),
-                        h6("Example 2: Convergence of GD, Momentum, Adagrad and Adam for an ill-conditioned function", align= "left"),
-                        actionButton("example2", "Example 2"),
-                        h6("Example 3: GD with and without momentum: Capability of escaping local minima", align= "left"),
-                        actionButton("example3", "Example 3"),
-                        h6("Example 4: GD with momentum: Terminating in saddle point", align= "left"),
-                        actionButton("example4", "Example 4")),
+      # Specify action buttons for the examples. If list of examples (i.e. 'examples') is extended, add another action button here.
+     # column(3,
 
-# Specify slider inputs for playing around. Theses are defined as 'uiOutput' since they need to take on values when the parameters
-# are set by e.g. pre-defined examples. They react to changes in the valiables and are permanently updated.
-        column(3,
-                        h4("Option B: Play around", align= "left"),
-                        uiOutput("fun"),
-                        uiOutput("method"),
-                        uiOutput("x1coords"),
-                        uiOutput("x2coords"),
-                        uiOutput("step.size"),
-                        uiOutput("max.iter"),
-                        uiOutput("phi"),
-                        uiOutput("phi1"),
-                        uiOutput("phi2")),
+        # h4("Option A: See example optimization runs:", align= "left"),
+        # h6("Example 1: Convergence of GD with and without momentum for an ill-conditioned function", align= "left"),
+        # actionButton("example1", "Example 1"),
+        # h6("Example 2: Convergence of GD, Momentum, Adagrad and Adam for an ill-conditioned function", align= "left"),
+        # actionButton("example2", "Example 2"),
+        # h6("Example 3: GD with and without momentum: Capability of escaping local minima", align= "left"),
+        # actionButton("example3", "Example 3"),
+        # h6("Example 4: GD with momentum: Terminating in saddle point", align= "left"),
+        # actionButton("example4", "Example 4")
+    h4("Option A: Predefined Examples", align= "left"),
+    selectInput("example", "Choose predefined example",
+      choices = list(" " = "null", "Example 1" = "example1", "Example 2" = "example2", "Example 3" = "example3",
+        "Example 4" = "example4"), selected = "null", selectize = FALSE)
 
+    #)
+    ,
+
+      # Specify slider inputs for playing around. Theses are defined as 'uiOutput' since they need to take on values when the parameters
+      # are set by e.g. pre-defined examples. They react to changes in the valiables and are permanently updated.
+    #  column(3,
+        h4("Option B: Play around", align= "left"),
+        uiOutput("fun"),
+        uiOutput("method"),
+        uiOutput("x1coords"),
+        uiOutput("x2coords"),
+        uiOutput("step.size"),
+        uiOutput("max.iter"),
+        uiOutput("phi"),
+        uiOutput("phi1"),
+        uiOutput("phi2")#))
+  ),
+  dashboardBody(
+fluidRow(
 # Specify the order of the plots of the application and their repsective size.
         column(5,
                 mainPanel(
@@ -77,7 +89,7 @@ ui <- fluidPage(
                   plotOutput("plot2d", width = "650px", height = "350px"),
                   plotlyOutput("plot3d", width = "650px", height = "350px")))
 
-        ))
+        )))
 
 
 
@@ -87,7 +99,10 @@ server <- function(input, output, session){
   Reactives = reactiveValues()
 
   observeEvent(
-    input$example1, {
+    input$example, {
+      if(input$example != "null"){
+      ex <- input$example
+      if(ex == "example1"){
       updateCheckboxInput(session, "method", value = examples$Scenario2$method)
       updateSliderInput(session, "step.size", value = examples$Scenario2$step.size)
       updateSliderInput(session, "max.iter", value = examples$Scenario2$max.iter)
@@ -97,46 +112,96 @@ server <- function(input, output, session){
       updateSliderInput(session, "startx1", value = examples$Scenario2$startx1)
       updateSliderInput(session, "startx2", value = examples$Scenario2$startx2)
       updateSelectInput(session, "fun", selected = examples$Scenario2$fun)
+      }
+      else if(ex == "example2"){
+        updateSelectInput(session, "fun", selected = examples$Scenario3$fun)
+        updateCheckboxInput(session, "method", value = examples$Scenario3$method)
+        updateSliderInput(session, "step.size", value = examples$Scenario3$step.size)
+        updateSliderInput(session, "max.iter", value = examples$Scenario3$max.iter)
+        updateSliderInput(session, "phi", value = examples$Scenario3$phi)
+        updateSliderInput(session, "phi1", value = examples$Scenario3$phi1)
+        updateSliderInput(session, "phi2", value = examples$Scenario3$phi2)
+        updateSliderInput(session, "startx1", value = examples$Scenario3$startx1)
+        updateSliderInput(session, "startx2", value = examples$Scenario3$startx2)
+      }
+      else if(ex == "example3"){
+        updateCheckboxInput(session, "method", value = examples$Scenario1$method)
+        updateSliderInput(session, "step.size", value = examples$Scenario1$step.size)
+        updateSliderInput(session, "max.iter", value = examples$Scenario1$max.iter)
+        updateSliderInput(session, "phi", value = examples$Scenario1$phi)
+        updateSliderInput(session, "phi1", value = examples$Scenario1$phi1)
+        updateSliderInput(session, "phi2", value = examples$Scenario1$phi2)
+        updateSliderInput(session, "startx1", value = examples$Scenario1$startx1)
+        updateSliderInput(session, "startx2", value = examples$Scenario1$startx2)
+        updateSelectInput(session, "fun", selected = examples$Scenario1$fun)
+      }
+      else if(ex == "example4"){
+        updateCheckboxInput(session, "method", value = examples$Scenario4$method)
+        updateSliderInput(session, "step.size", value = examples$Scenario4$step.size)
+        updateSliderInput(session, "max.iter", value = examples$Scenario4$max.iter)
+        updateSliderInput(session, "phi", value = examples$Scenario4$phi)
+        updateSliderInput(session, "phi1", value = examples$Scenario4$phi1)
+        updateSliderInput(session, "phi2", value = examples$Scenario4$phi2)
+        updateSliderInput(session, "startx1", value = examples$Scenario4$startx1)
+        updateSliderInput(session, "startx2", value = examples$Scenario4$startx2)
+        updateSelectInput(session, "fun", selected = examples$Scenario4$fun)
+      }
+      }
+      else if(input$example == "null"){
+        NULL
+      }
     })
+  # observeEvent(
+  #   input$example1, {
+  #     updateCheckboxInput(session, "method", value = examples$Scenario2$method)
+  #     updateSliderInput(session, "step.size", value = examples$Scenario2$step.size)
+  #     updateSliderInput(session, "max.iter", value = examples$Scenario2$max.iter)
+  #     updateSliderInput(session, "phi", value = examples$Scenario2$phi)
+  #     updateSliderInput(session, "phi1", value = examples$Scenario2$phi1)
+  #     updateSliderInput(session, "phi2", value = examples$Scenario2$phi2)
+  #     updateSliderInput(session, "startx1", value = examples$Scenario2$startx1)
+  #     updateSliderInput(session, "startx2", value = examples$Scenario2$startx2)
+  #     updateSelectInput(session, "fun", selected = examples$Scenario2$fun)
+  #   })
 
-  observeEvent(
-    input$example2, {
-      updateSelectInput(session, "fun", selected = examples$Scenario3$fun)
-      updateCheckboxInput(session, "method", value = examples$Scenario3$method)
-      updateSliderInput(session, "step.size", value = examples$Scenario3$step.size)
-      updateSliderInput(session, "max.iter", value = examples$Scenario3$max.iter)
-      updateSliderInput(session, "phi", value = examples$Scenario3$phi)
-      updateSliderInput(session, "phi1", value = examples$Scenario3$phi1)
-      updateSliderInput(session, "phi2", value = examples$Scenario3$phi2)
-      updateSliderInput(session, "startx1", value = examples$Scenario3$startx1)
-      updateSliderInput(session, "startx2", value = examples$Scenario3$startx2)
-    })
+  # observeEvent(
+  #   input$example2, {
+  #     updateSelectInput(session, "fun", selected = examples$Scenario3$fun)
+  #     updateCheckboxInput(session, "method", value = examples$Scenario3$method)
+  #     updateSliderInput(session, "step.size", value = examples$Scenario3$step.size)
+  #     updateSliderInput(session, "max.iter", value = examples$Scenario3$max.iter)
+  #     updateSliderInput(session, "phi", value = examples$Scenario3$phi)
+  #     updateSliderInput(session, "phi1", value = examples$Scenario3$phi1)
+  #     updateSliderInput(session, "phi2", value = examples$Scenario3$phi2)
+  #     updateSliderInput(session, "startx1", value = examples$Scenario3$startx1)
+  #     updateSliderInput(session, "startx2", value = examples$Scenario3$startx2)
+  #   })
 
-  observeEvent(
-    input$example3, {
-      updateCheckboxInput(session, "method", value = examples$Scenario1$method)
-      updateSliderInput(session, "step.size", value = examples$Scenario1$step.size)
-      updateSliderInput(session, "max.iter", value = examples$Scenario1$max.iter)
-      updateSliderInput(session, "phi", value = examples$Scenario1$phi)
-      updateSliderInput(session, "phi1", value = examples$Scenario1$phi1)
-      updateSliderInput(session, "phi2", value = examples$Scenario1$phi2)
-      updateSliderInput(session, "startx1", value = examples$Scenario1$startx1)
-      updateSliderInput(session, "startx2", value = examples$Scenario1$startx2)
-      updateSelectInput(session, "fun", selected = examples$Scenario1$fun)
-    })
-
-  observeEvent(
-    input$example4, {
-      updateCheckboxInput(session, "method", value = examples$Scenario4$method)
-      updateSliderInput(session, "step.size", value = examples$Scenario4$step.size)
-      updateSliderInput(session, "max.iter", value = examples$Scenario4$max.iter)
-      updateSliderInput(session, "phi", value = examples$Scenario4$phi)
-      updateSliderInput(session, "phi1", value = examples$Scenario4$phi1)
-      updateSliderInput(session, "phi2", value = examples$Scenario4$phi2)
-      updateSliderInput(session, "startx1", value = examples$Scenario4$startx1)
-      updateSliderInput(session, "startx2", value = examples$Scenario4$startx2)
-      updateSelectInput(session, "fun", selected = examples$Scenario4$fun)
-    })
+  # observeEvent(
+  #   input$example3, {
+  #     updateCheckboxInput(session, "method", value = examples$Scenario1$method)
+  #     updateSliderInput(session, "step.size", value = examples$Scenario1$step.size)
+  #     updateSliderInput(session, "max.iter", value = examples$Scenario1$max.iter)
+  #     updateSliderInput(session, "phi", value = examples$Scenario1$phi)
+  #     updateSliderInput(session, "phi1", value = examples$Scenario1$phi1)
+  #     updateSliderInput(session, "phi2", value = examples$Scenario1$phi2)
+  #     updateSliderInput(session, "startx1", value = examples$Scenario1$startx1)
+  #     updateSliderInput(session, "startx2", value = examples$Scenario1$startx2)
+  #     updateSelectInput(session, "fun", selected = examples$Scenario1$fun)
+  #   })
+#
+#   observeEvent(
+#     input$example4, {
+#       updateCheckboxInput(session, "method", value = examples$Scenario4$method)
+#       updateSliderInput(session, "step.size", value = examples$Scenario4$step.size)
+#       updateSliderInput(session, "max.iter", value = examples$Scenario4$max.iter)
+#       updateSliderInput(session, "phi", value = examples$Scenario4$phi)
+#       updateSliderInput(session, "phi1", value = examples$Scenario4$phi1)
+#       updateSliderInput(session, "phi2", value = examples$Scenario4$phi2)
+#       updateSliderInput(session, "startx1", value = examples$Scenario4$startx1)
+#       updateSliderInput(session, "startx2", value = examples$Scenario4$startx2)
+#       updateSelectInput(session, "fun", selected = examples$Scenario4$fun)
+#     })
 
 
   observe({
