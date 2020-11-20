@@ -15,6 +15,7 @@ Suggests:
     devtools
 Depends: 
     checkmate,
+    magrittr,
     dplyr,
     ggplot2,
     gridExtra,
@@ -24,7 +25,10 @@ Depends:
     RColorBrewer,
     reshape2,
     shiny,
+    shinydashboard,
+    shinyjs,
+    shinybusy,
     smoof,
     stringr,
     ggnewscale
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0

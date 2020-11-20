@@ -9,7 +9,7 @@
 #' @import ggplot2
 #' @import ggnewscale
 #'
-#' @param f a (multi-) dimensional function to be eptimized.
+#' @param f a (multi-) dimensional function to be optimized.
 #' @param x1.lower the lower boundary for the range of the x1 coordinate displayed.
 #' @param x1.upper the upper boundary for the range of the x1 coordinate displayed.
 #' @param x2.lower the lower boundary for the range of the x2 coordinate displayed.
@@ -65,7 +65,7 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
 
   plot = ggplot(plot.df, aes(x = iter, y = loss, color = algo)) +
     geom_path() +
-    ggtitle("Loss to optimum") +
+    ggtitle("Objective value") +#("Loss to optimum") +
     xlab("Iteration") +
     ylab("Loss") +
     theme(legend.title = element_blank()) +
