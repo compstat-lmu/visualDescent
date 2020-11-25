@@ -2,6 +2,7 @@
 
 export(NAG)
 export(RMSprop)
+export(adaDelta)
 export(adaGrad)
 export(adam)
 export(gradDescent)

@@ -1,8 +1,8 @@
 Package: visualDescent
 Type: Package
 Title: Visulaization of descent method for multi-dimensional optimization functions
-Version: 0.1.0
-Author: Philipp Scheller
+Version: 0.2.0
+Author: Theresa Stüber, Philipp Scheller
 Maintainer: The package maintainer <yourself@somewhere.net>
 Description: This package aims to visualize various descent methods for 
               optimizing multi-dimensional functions. 
@@ -30,5 +30,6 @@ Depends:
     shinybusy,
     smoof,
     stringr,
-    ggnewscale
+    ggnewscale,
+    withMathJax
 RoxygenNote: 7.1.0

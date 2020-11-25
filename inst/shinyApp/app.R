@@ -12,7 +12,10 @@ options(shiny.sanitize.errors = FALSE)
 
 
 # Define general parameters of functions
-funData = readRDS("funData.rda")
+# funData = readRDS("funData.rda")
+
+#added new objective functions, read in via
+funData = readRDS("objFunData.RDS")
 funNames = as.list(names(funData))
 xValues = lapply(funData, function(x) {lower = getLowerBoxConstraints(x)
 upper = getUpperBoxConstraints(x)
@@ -92,6 +95,22 @@ ui <- dashboardPage(dashboardHeader(),
     ),
 
     conditionalPanel(condition = "input.run == 0", textOutput("text_update")),
+
+    conditionalPanel(condition = "input.fun == 'Ackley2d'", uiOutput(("text_ackley"))),
+    conditionalPanel(condition = "input.fun == 'Exponential'", uiOutput(("text_exponential"))),
+    conditionalPanel(condition = "input.fun == 'Generalized-Drop-Wave'", uiOutput(("text_dropwave"))),
+    conditionalPanel(condition = "input.fun == 'Giunta'", uiOutput(("text_giunta"))),
+    conditionalPanel(condition = "input.fun == 'Himmelblau'", uiOutput(("text_himmelblau"))),
+    conditionalPanel(condition = "input.fun == 'Hosaki'", uiOutput(("text_hosaki"))),
+    conditionalPanel(condition = "input.fun == 'HyperEllipsoid'", uiOutput(("text_hyperellipsoid"))),
+    conditionalPanel(condition = "input.fun == 'Paraboloid'", uiOutput(("text_paraboloid"))),
+    conditionalPanel(condition = "input.fun == 'Periodic'", uiOutput(("text_periodic"))),
+    conditionalPanel(condition = "input.fun == 'Rosenbrock'", uiOutput(("text_rosenbrock"))),
+    conditionalPanel(condition = "input.fun == 'Schwefel'", uiOutput(("text_schwefel"))),
+    conditionalPanel(condition = "input.fun == 'Sphere'", uiOutput(("text_sphere"))),
+    conditionalPanel(condition = "input.fun == 'StyblinskiTang'", uiOutput(("text_styblinski"))),
+
+
     # Specify the order of the plots of the application and their repsective size.
     textOutput("text"),
     plotOutput("plotLoss", width = "650px", height = "350px"),
@@ -122,6 +141,68 @@ server <- function(input, output, session){
 
   output$text_example4 <- renderText({
     "GD with momentum: Terminating in saddle point."
+  })
+
+  output$text_ackley <- renderUI({
+    #withMathJax("Ackley-2D Function: $$
+    withMathJax("$$ \\begin{split}
+    f_{\\text{Ackley-2D}}(\\mathbf{x}) =& -20 \\exp \\Bigl(-0.2 \\bigl(\\frac{1}{d} \\sum_{i=1}^d x_{i}^{2}\\bigl)^{1/2} \\Bigl) \\\\
+     &-\\exp \\Bigl(\\frac{1}{d} \\sum_{i=1}^{d} \\cos(2 \\pi x_i)\\Bigl) + 20 + \\exp(1)
+     \\end{split} $$")
+    # \\text{with } & a = 20, b = 0.2, c = 2 \\pi, d = dimension = 2
+    # "f = -a * exp(-b)"
+  })
+
+  output$text_exponential <- renderUI({
+    withMathJax("$$ f_{\\text{Exponential}}(\\mathbf{x}) = - \\exp(-0.5 * \\sum_{i=1}^d x_i^2) $$")
+  })
+
+  output$text_dropwave <- renderUI({
+    withMathJax("$$ f_{\\text{Drop-Wave}}(\\mathbf{x}) = \\frac{1+\\cos \\Bigl(12 \\sqrt{x_1^2+x_2^2} \\Bigl)}{0.5 (x_1^2 + x_2^2) + 2} $$")
+  })
+
+  output$text_giunta <- renderUI({
+    withMathJax("$$
+      f_{\\text{Giunta}}(\\mathbf{x}) = 0.6 + \\sum_{i=1}^d \\Bigl(\\sin^2 (1-\\frac{16}{15} x_i) - \\frac{1}{50} \\sin (4-\\frac{64}{15} x_i)
+      - \\sin (1 - \\frac{16}{15} x_i) \\Bigl)$$")
+  })
+
+  output$text_himmelblau <- renderUI({
+    withMathJax("$$ f_{\\text{Himmelblau}}(\\mathbf{x}) = \\big(x_1^2 + x_2 - 11 \\bigl)\\big(x_1 + x_2^2 - 7 \\bigl)$$")
+  })
+
+  output$text_hosaki <- renderUI({
+    withMathJax("$$ f_{\\text{Hosaki}}(\\mathbf{x}) = \\Bigl(1 - 8 x_1 + 7 x_1^2 - 7 * \\frac{x_1^3}{3} + \\frac{x_1^4}{4}\\Bigl)
+      \\cdot x_2^2  \\exp(-x_2)$$")
+  })
+
+  output$text_hyperellipsoid <- renderUI({
+    withMathJax("$$ f_{\\text{Hyper-Ellipsoid}}(\\mathbf{x}) = \\sum_{i=1}^{d} \\sum_{j=1}^{i} x_j^2 $$")
+  })
+
+  output$text_paraboloid <- renderUI({
+    withMathJax("$$ f_{\\text{Paraboloid}}(\\mathbf{x}) =  2*x_1^2 + 50*x_2^2$$")
+  })
+
+  output$text_paraboloid <- renderUI({
+    withMathJax("$$ f_{\\text{Periodic}}(\\mathbf{x}) =  1 + \\sin(x_1)^2 + \\sin(x_2)^2 - 0.1 * \\exp(-x_1^2 - x_2^2)$$")
+  })
+
+  output$text_rosenbrock <- renderUI({
+    withMathJax("$$ f_{\\text{Rosenbrock}}(\\mathbf{x}) = \\sum_{i=1}^{d-1} \\bigl(100 (x_i^2 - x_{i+1})\\bigl)^2 + \\bigl(x_i - 1\\bigl)^2 $$")
+  })
+
+  output$text_schwefel <- renderUI({
+    withMathJax("$$ f_{\\text{Schwefel}}(\\mathbf{x}) = 418.9829 d - \\sum_{i=1}^d x_i \\sin \\bigl(\\sqrt{x_i} \\bigl) $$")
+  })
+
+  output$text_sphere<- renderUI({
+    withMathJax("$$ f_{\\text{Sphere}}(\\mathbf{x}) = \\sum_{i=1}^d x_i^2 $$")
+  })
+
+
+  output$text_styblinski <- renderUI({
+    withMathJax("$$ f_{\\text{Styblinski-Tang}}(\\mathbf{x}) = \\frac{1}{2} \\sum_{i=1}^{d} (x_i^4 - 16 x_i^2 + 5 x_i) $$")
   })
 
   Reactives = reactiveValues()
@@ -242,7 +323,7 @@ server <- function(input, output, session){
 
     output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
       choices = c("GradientDescent", "Momentum",
-        "AdaGrad", "Adam", "RMS", "NAG"),
+        "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG"), #
       selected = if (is.null(input$method)) {
         "GradientDescent"
       } else {
@@ -372,6 +453,19 @@ server <- function(input, output, session){
       resultsRMS = c(0,0,0)
       errorRMS = res$errorOccured
     }
+    ###
+    #browser()
+    if ("AdaDelta" %in% method) {
+      res = adaDelta(plot, c(x1, x2), gamma = 0.95,
+        max.iter = max.iter)
+      resultsAdaDelta = res$results
+      errorAdaDelta = res$errorOccured
+
+    } else {
+      resultsAdaDelta = c(0,0,0)
+      errorAdaDelta = res$errorOccured
+    }
+    ###
     if ("NAG" %in% method) {
       res = NAG(plot, c(x1, x2), step.size = step.size,
         max.iter = max.iter, phi = phi)
@@ -382,9 +476,9 @@ server <- function(input, output, session){
       errorNAG = res$errorOccured
     }
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam,
-      RMS = resultsRMS, NAG = resultsNAG)
+      RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG) #
     errors = list(GradientDescent = errorGD, Momentum = errorMomentum, AdaGrad = errorAdaGrad, Adam = errorAdam,
-      RMS = errorRMS, NAG = errorNAG)
+      RMS = errorRMS, AdaDelta = errorAdaDelta, NAG = errorNAG)#
     results = results[method]
     errors = get(method, errors)
 
@@ -420,8 +514,6 @@ server <- function(input, output, session){
       Reactives$plot2d
     })
     output$plotLoss = renderPlot({
-      #   input$run
-      # Sys.sleep(3)
       Reactives$plotLoss
     })
     output$plot3d = renderPlotly({
