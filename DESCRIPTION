@@ -30,6 +30,5 @@ Depends:
     shinybusy,
     smoof,
     stringr,
-    ggnewscale,
-    withMathJax
+    ggnewscale
 RoxygenNote: 7.1.0

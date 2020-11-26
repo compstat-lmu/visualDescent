@@ -323,7 +323,7 @@ server <- function(input, output, session){
 
     output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
       choices = c("GradientDescent", "Momentum",
-        "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG"), #
+        "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG", "NelderMead"), #
       selected = if (is.null(input$method)) {
         "GradientDescent"
       } else {
@@ -454,7 +454,6 @@ server <- function(input, output, session){
       errorRMS = res$errorOccured
     }
     ###
-    #browser()
     if ("AdaDelta" %in% method) {
       res = adaDelta(plot, c(x1, x2), gamma = 0.95,
         max.iter = max.iter)
@@ -475,10 +474,24 @@ server <- function(input, output, session){
       resultsNAG = c(0,0,0)
       errorNAG = res$errorOccured
     }
+    ###
+    #browser()
+    if ("NelderMead" %in% method) {
+      res = nelderMead(plot, c(x1, x2),
+        max.iter = max.iter)
+      resultsNelderMead = res$results
+      errorNelderMead = res$errorOccured
+
+    } else {
+      resultsNelderMead = c(0,0,0)
+      errorNelderMead = res$errorOccured
+    }
+    ###
+
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam,
-      RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG) #
+      RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG, NelderMead = resultsNelderMead) #
     errors = list(GradientDescent = errorGD, Momentum = errorMomentum, AdaGrad = errorAdaGrad, Adam = errorAdam,
-      RMS = errorRMS, AdaDelta = errorAdaDelta, NAG = errorNAG)#
+      RMS = errorRMS, AdaDelta = errorAdaDelta, NAG = errorNAG, NelderMead = errorNelderMead)#
     results = results[method]
     errors = get(method, errors)
 
