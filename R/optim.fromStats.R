@@ -13,7 +13,7 @@
 #' @param stop.grad the stop-criterion for the gradient change.
 #'
 #' @export
-nelderMead = function(f, x0, max.iter = 100, stop.grad = .Machine$double.eps) {
+optimStats = function(f, x0, max.iter = 100, method = "Nelder-Mead", stop.grad = .Machine$double.eps) {
   
   errorObs = logical(1L)
   theta = matrix(0, nrow = (length(x0)+1), ncol = max.iter)
@@ -37,16 +37,16 @@ nelderMead = function(f, x0, max.iter = 100, stop.grad = .Machine$double.eps) {
     #     }
     #   })
     
-
+    
     #Check if stop-criterion already reached
     if (abs(theta[nrow(theta),i] - theta[nrow(theta), i-1]) < stop.grad) {
       theta[,i:max.iter] <- NA
       i = i-1
       break
     }
-
+    
     #Determine new point by moving into negative grad direction
-    theta[1:length(x0), i] = optim(theta[1:length(x0), i-1], f, method = "Nelder-Mead")$par
+    theta[1:length(x0), i] = optim(theta[1:length(x0), i-1], f, method = method)$par
     theta[length(x0)+1, i] = f(theta[1:length(x0), i])
     
   }
@@ -58,5 +58,5 @@ nelderMead = function(f, x0, max.iter = 100, stop.grad = .Machine$double.eps) {
   names(out) = paste0("x", 1:(ncol(out)))
   out = cbind(out, y = theta[length(x0)+1, ])
   
-  return(list(algorithm = "Nelder-Mead", results = out, niter = i, optimfun = f, errorOccured = errorObs))
+  return(list(algorithm = method, results = out, niter = i, optimfun = f, errorOccured = errorObs))
 }

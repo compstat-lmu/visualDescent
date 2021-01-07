@@ -1,3 +1,4 @@
+#setwd("/home/tessi/Arbeit/visualDescent/inst/shinyApp")
 require(shiny)
 require(shinydashboard)
 require(shinyjs)
@@ -10,7 +11,6 @@ library(visualDescent)
 # thrown on the server set option to 'FALSE'.
 options(shiny.sanitize.errors = FALSE)
 
-
 # Define general parameters of functions
 # funData = readRDS("funData.rda")
 
@@ -19,11 +19,11 @@ funData = readRDS("objFunData.RDS")
 funNames = as.list(names(funData))
 xValues = lapply(funData, function(x) {lower = getLowerBoxConstraints(x)
 upper = getUpperBoxConstraints(x)
-return(c(lower = lower, upper = upper))})
+  return(c(lower = lower, upper = upper))})
 opt = lapply(funData, function(x) {y = list(x1 = getGlobalOptimum(x)$param[1],
   x2 = getGlobalOptimum(x)$param[2],
   z = getGlobalOptimum(x)$value)
-return(y)})
+  return(y)})
 
 # Specify examples: this list can be extended. It is important to specify all parameters and set the parameters which
 # are not needed for the optimization to 0 (do not simply drop them).
@@ -96,27 +96,43 @@ ui <- dashboardPage(dashboardHeader(),
 
     conditionalPanel(condition = "input.run == 0", textOutput("text_update")),
 
-    conditionalPanel(condition = "input.fun == 'Ackley2d'", uiOutput(("text_ackley"))),
-    conditionalPanel(condition = "input.fun == 'Exponential'", uiOutput(("text_exponential"))),
-    conditionalPanel(condition = "input.fun == 'Generalized-Drop-Wave'", uiOutput(("text_dropwave"))),
-    conditionalPanel(condition = "input.fun == 'Giunta'", uiOutput(("text_giunta"))),
-    conditionalPanel(condition = "input.fun == 'Himmelblau'", uiOutput(("text_himmelblau"))),
-    conditionalPanel(condition = "input.fun == 'Hosaki'", uiOutput(("text_hosaki"))),
-    conditionalPanel(condition = "input.fun == 'HyperEllipsoid'", uiOutput(("text_hyperellipsoid"))),
-    conditionalPanel(condition = "input.fun == 'Paraboloid'", uiOutput(("text_paraboloid"))),
-    conditionalPanel(condition = "input.fun == 'Periodic'", uiOutput(("text_periodic"))),
-    conditionalPanel(condition = "input.fun == 'Rosenbrock'", uiOutput(("text_rosenbrock"))),
-    conditionalPanel(condition = "input.fun == 'Schwefel'", uiOutput(("text_schwefel"))),
-    conditionalPanel(condition = "input.fun == 'Sphere'", uiOutput(("text_sphere"))),
-    conditionalPanel(condition = "input.fun == 'StyblinskiTang'", uiOutput(("text_styblinski"))),
 
 
-    # Specify the order of the plots of the application and their repsective size.
+
+    # Specify the order of the plots of the application and their respective size.
     textOutput("text"),
-    plotOutput("plotLoss", width = "650px", height = "350px"),
-    plotOutput("plot2d", width = "650px", height = "350px"),
-    plotlyOutput("plot3d", width = "650px", height = "350px")))
+    fluidRow(with = 12,
+      box(tabBox(
+          title = "Info on selected function",
+          # The id lets us use input$tabset1 on the server to find the current tab
+          id = "tabset1", width = "650px", height = "350px",
+          tabPanel("Function",
+            conditionalPanel(condition = "input.fun == 'Ackley2d'", uiOutput(("text_ackley"))),
+            conditionalPanel(condition = "input.fun == 'Exponential'", uiOutput(("text_exponential"))),
+            conditionalPanel(condition = "input.fun == 'Generalized-Drop-Wave'", uiOutput(("text_dropwave"))),
+            conditionalPanel(condition = "input.fun == 'Giunta'", uiOutput(("text_giunta"))),
+            conditionalPanel(condition = "input.fun == 'Himmelblau'", uiOutput(("text_himmelblau"))),
+            conditionalPanel(condition = "input.fun == 'Hosaki'", uiOutput(("text_hosaki"))),
+            conditionalPanel(condition = "input.fun == 'HyperEllipsoid'", uiOutput(("text_hyperellipsoid"))),
+            conditionalPanel(condition = "input.fun == 'Paraboloid'", uiOutput(("text_paraboloid"))),
+            conditionalPanel(condition = "input.fun == 'Periodic'", uiOutput(("text_periodic"))),
+            conditionalPanel(condition = "input.fun == 'Rosenbrock'", uiOutput(("text_rosenbrock"))),
+            conditionalPanel(condition = "input.fun == 'Schwefel'", uiOutput(("text_schwefel"))),
+            conditionalPanel(condition = "input.fun == 'Sphere'", uiOutput(("text_sphere"))),
+            conditionalPanel(condition = "input.fun == 'StyblinskiTang'", uiOutput(("text_styblinski")))
 
+            ),
+          tabPanel("2D Plot", conditionalPanel(condition = "input.fun == 'Ackley2d'", plotOutput("plot2d_info", height = "320"))),
+          tabPanel("3D Plot", "Tab content 2")
+        )
+      ),
+ box(plotOutput("plotLoss", width = "650px", height = "350px"))
+      ),
+    fluidRow(width = 12,
+    box(plotOutput("plot2d", width = "650px", height = "350px")),
+    box(plotlyOutput("plot3d", width = "650px", height = "350px")))
+    )
+  )
 
 
 
@@ -322,8 +338,8 @@ server <- function(input, output, session){
 
 
     output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
-      choices = c("GradientDescent", "Momentum",
-        "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG", "NelderMead"), #
+      choices = c("GradientDescent", "Momentum", "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG",
+        "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN"), #exported from optim funcion, package stats
       selected = if (is.null(input$method)) {
         "GradientDescent"
       } else {
@@ -389,6 +405,7 @@ server <- function(input, output, session){
     x2 = isolate(input$startx2)
     step.size = isolate(input$step.size)
     max.iter = isolate(input$max.iter)
+    #browser()
     method = isolate(input$method)
     phi = isolate(input$phi)
     phi1 = isolate(input$phi1)
@@ -475,9 +492,8 @@ server <- function(input, output, session){
       errorNAG = res$errorOccured
     }
     ###
-    #browser()
-    if ("NelderMead" %in% method) {
-      res = nelderMead(plot, c(x1, x2),
+    if ("Nelder-Mead" %in% method) {
+      res = optimStats(plot, c(x1, x2), method = "Nelder-Mead",
         max.iter = max.iter)
       resultsNelderMead = res$results
       errorNelderMead = res$errorOccured
@@ -486,12 +502,60 @@ server <- function(input, output, session){
       resultsNelderMead = c(0,0,0)
       errorNelderMead = res$errorOccured
     }
+
+    if ("BFGS" %in% method) {
+      res = optimStats(plot, c(x1, x2), method = "BFGS",
+        max.iter = max.iter)
+      resultsBFGS = res$results
+      errorBFGS = res$errorOccured
+
+    } else {
+      resultsBFGS = c(0,0,0)
+      errorBFGS = res$errorOccured
+    }
+
+    if ("L-BFGS-B" %in% method) {
+      res = optimStats(plot, c(x1, x2), method = "L-BFGS-B",
+        max.iter = max.iter)
+      resultsLBFGSB = res$results
+      errorLBFGSB = res$errorOccured
+
+    } else {
+      resultsLBFGSB = c(0,0,0)
+      errorLBFGSB = res$errorOccured
+    }
+
+    if ("CG" %in% method) {
+      res = optimStats(plot, c(x1, x2), method = "CG",
+        max.iter = max.iter)
+      resultsCG = res$results
+      errorCG = res$errorOccured
+
+    } else {
+      resultsCG = c(0,0,0)
+      errorCG = res$errorOccured
+    }
+
+    if ("SANN" %in% method) {
+      res = optimStats(plot, c(x1, x2), method = "SANN",
+        max.iter = max.iter)
+      resultsSANN = res$results
+      errorSANN = res$errorOccured
+
+    } else {
+      resultsSANN = c(0,0,0)
+      errorSANN = res$errorOccured
+    }
+
+
     ###
 
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam,
-      RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG, NelderMead = resultsNelderMead) #
+      RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG, 'Nelder-Mead' = resultsNelderMead, BFGS = resultsBFGS,
+      'L-BFGS-B' = resultsLBFGSB, CG = resultsCG, SANN = resultsSANN) #
     errors = list(GradientDescent = errorGD, Momentum = errorMomentum, AdaGrad = errorAdaGrad, Adam = errorAdam,
-      RMS = errorRMS, AdaDelta = errorAdaDelta, NAG = errorNAG, NelderMead = errorNelderMead)#
+      RMS = errorRMS, AdaDelta = errorAdaDelta, NAG = errorNAG, 'Nelder-Mead' = errorNelderMead, BFGS = errorBFGS,
+      'L-BFGS-B' = errorLBFGSB, CG = errorCG, SANN = errorSANN)#
     results = results[method]
     errors = get(method, errors)
 
@@ -506,7 +570,7 @@ server <- function(input, output, session){
     # #           fun = isolate(input$fun)
     #
 
-    Reactives$plot2d = plot2d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+    Reactives$plot2d_info = plot2d_info(plot, get(fun, xValues)[1], get(fun, xValues)[3],
       get(fun, xValues)[2], get(fun, xValues)[4],
       trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
       xmat = results, algoName = method, optimError = errors)
@@ -521,10 +585,10 @@ server <- function(input, output, session){
       trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
       xmat = results, algoName = method, optimError = errors)
 
-    Reactives$plotExport = grid.arrange(Reactives$plotLoss, Reactives$plot2d, ncol = 2)
+    Reactives$plotExport = grid.arrange(Reactives$plotLoss, Reactives$plot2d_info, ncol = 2)
 
-    output$plot2d = renderPlot({
-      Reactives$plot2d
+    output$plot2d_info = renderPlot({
+      Reactives$plot2d_info
     })
     output$plotLoss = renderPlot({
       Reactives$plotLoss
