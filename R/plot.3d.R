@@ -6,8 +6,9 @@
 #'
 #' @import checkmate
 #' @import plotly
+#' @import colorRamps
 #'
-#' @param f a (multi-) dimensional function to be eptimized.
+#' @param f a (multi-) dimensional function to be optimized.
 #' @param x1.lower the lower boundary for the range of the x1 coordinate displayed.
 #' @param x1.upper the upper boundary for the range of the x1 coordinate displayed.
 #' @param x2.lower the lower boundary for the range of the x2 coordinate displayed.
@@ -42,8 +43,14 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
   # Modify 'xmat' to match 3rd coordinate (set to 0) and identify number of procedures to be plotted
   nresults = length(xmat)
-  col = c("black", "red", "blue", "green")
-  col = col[1:nresults]
+  # col = c("black", "red", "blue", "green")
+  # col = col[1:nresults]
+  #col = gray.colors(nresults)
+  # col = heat.colors(nresults)
+  col = colorRamps::matlab.like2(nresults)
+  # col = jcolors::jcolors("pal10")
+  symb = c("circle", "square", "diamond", "triangle-up", "triangle-down", "triangle-left", "triangle-right", "cross", "x",
+    "diamod-tall", "diamond-wide")
 
   x1 = seq(x1.lower, x1.upper, length.out = n.x)
   x2 = seq(x2.lower, x2.upper, length.out = n.x)
@@ -74,34 +81,34 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
           project=list(z=TRUE)
         )
       ), showlegend = FALSE) #%>%
-    # add_annotations(text = "", xref="paper", yref="paper", x=1.05, xanchor="left",
-    #   y=1, yanchor="bottom", legendtitle=FALSE, showarrow=FALSE) %>%
-    # layout(legend = TRUE)
+  # add_annotations(text = "", xref="paper", yref="paper", x=1.05, xanchor="left",
+  #   y=1, yanchor="bottom", legendtitle=FALSE, showarrow=FALSE) %>%
+  # layout(legend = TRUE)
 
-    # layout(
-    #   title = plot.title,
-    #   scene = list(
-    #     xaxis = list(title = "x1"),
-    #     yaxis = list(title = "x2"),
-    #     zaxis = list(title = "y"),
-    #     color = c("grey")
-    #   )) %>%
+  # layout(
+  #   title = plot.title,
+  #   scene = list(
+  #     xaxis = list(title = "x1"),
+  #     yaxis = list(title = "x2"),
+  #     zaxis = list(title = "y"),
+  #     color = c("grey")
+  #   )) %>%
   #
   for(i in 1:length(xmat)){
-   plot.3d <- plot.3d %>% add_trace(data = data.frame(xmat[[i]]), type = "scatter3d", x = ~x1, y = ~x2, z = ~y,
-      mode = "markers", marker = list(size = 4, color = col[i], line = list(
-        color = 'rgb(220, 220, 220)',
-        width = 2
-      )
-      ), name = paste(names(xmat)[i]))#, showlegend = FALSE
-   }
+    plot.3d <- plot.3d %>% add_trace(data = data.frame(xmat[[i]]), type = "scatter3d", x = ~x1, y = ~x2, z = ~y,
+      mode = "markers", marker = list(symbol = symb[i], size = 4, color = gray.colors(1, alpha = 0.75), #color = col[i]),
+        line = list(
+        color = col[i],
+        width = 2)),
+      name = paste(names(xmat)[i]))#, showlegend = FALSE
+  }
 
   #
   # add_trace(data = plot.points, type = "scatter3d", x = ~x2, y = ~x1, z = ~y,
   #   mode = "markers", symbol = ~algo, marker = list(size = 5)) %>%
   #
-    # add_trace(data = plot.points, type = "scatter3d", x = ~x2, y = ~x1, z = ~y,
-    #   mode = "markers", symbol = ~algo, marker = list(size = 5)) %>%
+  # add_trace(data = plot.points, type = "scatter3d", x = ~x2, y = ~x1, z = ~y,
+  #   mode = "markers", symbol = ~algo, marker = list(size = 5)) %>%
 
   return(plot.3d)
 }

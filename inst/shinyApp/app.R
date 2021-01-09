@@ -19,11 +19,11 @@ funData = readRDS("objFunData.RDS")
 funNames = as.list(names(funData))
 xValues = lapply(funData, function(x) {lower = getLowerBoxConstraints(x)
 upper = getUpperBoxConstraints(x)
-  return(c(lower = lower, upper = upper))})
+return(c(lower = lower, upper = upper))})
 opt = lapply(funData, function(x) {y = list(x1 = getGlobalOptimum(x)$param[1],
   x2 = getGlobalOptimum(x)$param[2],
   z = getGlobalOptimum(x)$value)
-  return(y)})
+return(y)})
 
 # Specify examples: this list can be extended. It is important to specify all parameters and set the parameters which
 # are not needed for the optimization to 0 (do not simply drop them).
@@ -43,20 +43,6 @@ ui <- dashboardPage(dashboardHeader(),
 
     actionButton("run", "Update Window", icon("paper-plane"),
       style="color: #fff; background-color: #0aa321; border-color: #2e6da4"),
-    #fluidRow(
-
-    # Specify action buttons for the examples. If list of examples (i.e. 'examples') is extended, add another action button here.
-    # column(3,
-
-    # h4("Option A: See example optimization runs:", align= "left"),
-    # h6("Example 1: Convergence of GD with and without momentum for an ill-conditioned function", align= "left"),
-    # actionButton("example1", "Example 1"),
-    # h6("Example 2: Convergence of GD, Momentum, Adagrad and Adam for an ill-conditioned function", align= "left"),
-    # actionButton("example2", "Example 2"),
-    # h6("Example 3: GD with and without momentum: Capability of escaping local minima", align= "left"),
-    # actionButton("example3", "Example 3"),
-    # h6("Example 4: GD with momentum: Terminating in saddle point", align= "left"),
-    # actionButton("example4", "Example 4")
     hr(),
     h4("Opt. A: Predefined Examples", align= "left"),
     selectInput("example", "Choose predefined example",
@@ -96,48 +82,39 @@ ui <- dashboardPage(dashboardHeader(),
 
     conditionalPanel(condition = "input.run == 0", textOutput("text_update")),
 
-
-
-
     # Specify the order of the plots of the application and their respective size.
     textOutput("text"),
     fluidRow(with = 12,
       box(tabBox(
-          title = "Info on selected function",
-          # The id lets us use input$tabset1 on the server to find the current tab
-          id = "tabset1", width = "650px", height = "350px",
-          tabPanel("Function",
-            conditionalPanel(condition = "input.fun == 'Ackley2d'", uiOutput(("text_ackley"))),
-            conditionalPanel(condition = "input.fun == 'Exponential'", uiOutput(("text_exponential"))),
-            conditionalPanel(condition = "input.fun == 'Generalized-Drop-Wave'", uiOutput(("text_dropwave"))),
-            conditionalPanel(condition = "input.fun == 'Giunta'", uiOutput(("text_giunta"))),
-            conditionalPanel(condition = "input.fun == 'Himmelblau'", uiOutput(("text_himmelblau"))),
-            conditionalPanel(condition = "input.fun == 'Hosaki'", uiOutput(("text_hosaki"))),
-            conditionalPanel(condition = "input.fun == 'HyperEllipsoid'", uiOutput(("text_hyperellipsoid"))),
-            conditionalPanel(condition = "input.fun == 'Paraboloid'", uiOutput(("text_paraboloid"))),
-            conditionalPanel(condition = "input.fun == 'Periodic'", uiOutput(("text_periodic"))),
-            conditionalPanel(condition = "input.fun == 'Rosenbrock'", uiOutput(("text_rosenbrock"))),
-            conditionalPanel(condition = "input.fun == 'Schwefel'", uiOutput(("text_schwefel"))),
-            conditionalPanel(condition = "input.fun == 'Sphere'", uiOutput(("text_sphere"))),
-            conditionalPanel(condition = "input.fun == 'StyblinskiTang'", uiOutput(("text_styblinski")))
-
-            ),
-          tabPanel("2D Plot", conditionalPanel(condition = "input.fun == 'Ackley2d'", plotOutput("plot2d_info", height = "320"))),
-          tabPanel("3D Plot", "Tab content 2")
-        )
-      ),
- box(plotOutput("plotLoss", width = "650px", height = "350px"))
-      ),
+        title = "Info on selected function",
+        # The id lets us use input$tabset1 on the server to find the current tab
+        id = "tabset1", width = "650px", height = "350px",
+        tabPanel("Function",
+          conditionalPanel(condition = "input.fun == 'Ackley2d'", uiOutput(("text_ackley"))),
+          conditionalPanel(condition = "input.fun == 'Exponential'", uiOutput(("text_exponential"))),
+          conditionalPanel(condition = "input.fun == 'Generalized-Drop-Wave'", uiOutput(("text_dropwave"))),
+          conditionalPanel(condition = "input.fun == 'Giunta'", uiOutput(("text_giunta"))),
+          conditionalPanel(condition = "input.fun == 'Himmelblau'", uiOutput(("text_himmelblau"))),
+          conditionalPanel(condition = "input.fun == 'Hosaki'", uiOutput(("text_hosaki"))),
+          conditionalPanel(condition = "input.fun == 'HyperEllipsoid'", uiOutput(("text_hyperellipsoid"))),
+          conditionalPanel(condition = "input.fun == 'Paraboloid'", uiOutput(("text_paraboloid"))),
+          conditionalPanel(condition = "input.fun == 'Periodic'", uiOutput(("text_periodic"))),
+          conditionalPanel(condition = "input.fun == 'Rosenbrock'", uiOutput(("text_rosenbrock"))),
+          conditionalPanel(condition = "input.fun == 'Schwefel'", uiOutput(("text_schwefel"))),
+          conditionalPanel(condition = "input.fun == 'Sphere'", uiOutput(("text_sphere"))),
+          conditionalPanel(condition = "input.fun == 'StyblinskiTang'", uiOutput(("text_styblinski")))),
+        tabPanel("2D Plot", plotOutput("plot2d_info", height = "320")),
+        tabPanel("3D Plot", plotlyOutput("plot3d_info", height = "320px")))),
+      box(plotOutput("plotLoss", width = "650px", height = "350px"))
+    ),
     fluidRow(width = 12,
-    box(plotOutput("plot2d", width = "650px", height = "350px")),
-    box(plotlyOutput("plot3d", width = "650px", height = "350px")))
-    )
+      box(plotlyOutput("plot2d", width = "650px", height = "350px")),
+      box(plotlyOutput("plot3d", width = "650px", height = "350px")))
   )
-
+)
 
 
 server <- function(input, output, session){
-
   output$text_update <- renderText({
     "Set (new) selections and commit settings to plot by pressing [Update Window]. The button has to be pushed again in case
     of any changes in the settings."
@@ -215,7 +192,6 @@ server <- function(input, output, session){
   output$text_sphere<- renderUI({
     withMathJax("$$ f_{\\text{Sphere}}(\\mathbf{x}) = \\sum_{i=1}^d x_i^2 $$")
   })
-
 
   output$text_styblinski <- renderUI({
     withMathJax("$$ f_{\\text{Styblinski-Tang}}(\\mathbf{x}) = \\frac{1}{2} \\sum_{i=1}^{d} (x_i^4 - 16 x_i^2 + 5 x_i) $$")
@@ -336,7 +312,6 @@ server <- function(input, output, session){
       }
     )})
 
-
     output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
       choices = c("GradientDescent", "Momentum", "AdaGrad", "Adam", "RMS", "AdaDelta", "NAG",
         "Nelder-Mead", "BFGS", "CG", "L-BFGS-B", "SANN"), #exported from optim funcion, package stats
@@ -346,7 +321,6 @@ server <- function(input, output, session){
         Reactives$method
       }
     )})
-
 
     output$step.size = renderUI({sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
       min = 0, max = 0.5, step = 0.001,
@@ -392,29 +366,20 @@ server <- function(input, output, session){
         Reactives$phi2
       }
     )})
-
   })
 
 
-
-
   observeEvent(input$run, {
-
     plot = isolate(get(input$fun, funData))
     x1 = isolate(input$startx1)
     x2 = isolate(input$startx2)
     step.size = isolate(input$step.size)
     max.iter = isolate(input$max.iter)
-    #browser()
     method = isolate(input$method)
     phi = isolate(input$phi)
     phi1 = isolate(input$phi1)
     phi2 = isolate(input$phi2)
     fun = isolate(input$fun)
-
-    # output$text = renderText({
-    #   c(x1, x2)
-    # })
 
     if ("GradientDescent" %in% method) {
       res = gradDescent(plot, c(x1, x2), step.size = step.size,
@@ -547,9 +512,6 @@ server <- function(input, output, session){
       errorSANN = res$errorOccured
     }
 
-
-    ###
-
     results = list(GradientDescent = resultsGD, Momentum = resultsMomentum, AdaGrad = resultsAdaGrad, Adam = resultsAdam,
       RMS = resultsRMS, AdaDelta = resultsAdaDelta, NAG = resultsNAG, 'Nelder-Mead' = resultsNelderMead, BFGS = resultsBFGS,
       'L-BFGS-B' = resultsLBFGSB, CG = resultsCG, SANN = resultsSANN) #
@@ -559,16 +521,6 @@ server <- function(input, output, session){
     results = results[method]
     errors = get(method, errors)
 
-
-
-    # # })
-    # #
-    # # observeEvent(input$run, {
-    # #
-    # #           req(Reactives$results, input$fun)
-    # #           results = isolate(Reactive$results)
-    # #           fun = isolate(input$fun)
-    #
 
     Reactives$plot2d_info = plot2d_info(plot, get(fun, xValues)[1], get(fun, xValues)[3],
       get(fun, xValues)[2], get(fun, xValues)[4],
@@ -580,10 +532,19 @@ server <- function(input, output, session){
       xmat = as.list(results), algoName = as.list(method),
       optimError = errors)
 
+    Reactives$plot2d =  plot2d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+      get(fun, xValues)[2], get(fun, xValues)[4],
+      trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
+      xmat = results, algoName = method, optimError = errors)
+
     Reactives$plot3d =  plot3d(plot, get(fun, xValues)[1], get(fun, xValues)[3],
       get(fun, xValues)[2], get(fun, xValues)[4],
       trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)),
       xmat = results, algoName = method, optimError = errors)
+
+    Reactives$plot3d_info =  plot3d.info(plot, get(fun, xValues)[1], get(fun, xValues)[3],
+      get(fun, xValues)[2], get(fun, xValues)[4],
+      trueOpt = c(as.numeric(get(fun, opt)$x1), as.numeric(get(fun, opt)$x2)))
 
     Reactives$plotExport = grid.arrange(Reactives$plotLoss, Reactives$plot2d_info, ncol = 2)
 
@@ -593,8 +554,14 @@ server <- function(input, output, session){
     output$plotLoss = renderPlot({
       Reactives$plotLoss
     })
+    output$plot2d = renderPlotly({
+      Reactives$plot2d
+    })
     output$plot3d = renderPlotly({
       Reactives$plot3d
+    })
+    output$plot3d_info = renderPlotly({
+      Reactives$plot3d_info
     })
 
   })
@@ -603,10 +570,8 @@ server <- function(input, output, session){
 
     errorPath = FALSE
     tryCatch({
-
       ggsave(path = input$filePath, filename = "plot.png", plot = Reactives$plotExport, width = 30, height = 12,
         units = "cm", dpi = 600)
-
     },
       error = function(contd) {
         errorPath <<- TRUE

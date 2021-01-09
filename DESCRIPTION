@@ -29,6 +29,7 @@ Depends:
     shinyjs,
     shinybusy,
     smoof,
+    colorRamps,
     stringr,
     ggnewscale
 RoxygenNote: 7.1.1
