@@ -8,7 +8,7 @@
 #' @import plotly
 #' @import colorRamps
 #'
-#' @param f a (multi-) dimensional function to be eptimized.
+#' @param f a (multi-) dimensional function to be optimized.
 #' @param x1.lower the lower boundary for the range of the x1 coordinate displayed.
 #' @param x1.upper the upper boundary for the range of the x1 coordinate displayed.
 #' @param x2.lower the lower boundary for the range of the x2 coordinate displayed.
@@ -76,7 +76,7 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
         line = list(
           color = col[i],
           width = 2)),
-      name = paste(names(xmat)[i])
+      name = paste(names(xmat)[i]))
   }
 
   return(plot.2d)

@@ -34,7 +34,7 @@ plot3d(
 
 \item{trueOpt}{is a numeric vector of the true optimum of the function.}
 
-\item{algoNamw}{list of strings with names of algorithms. Length must equal length of 'xmat'.}
+\item{algoName}{list of strings with names of algorithms. Length must equal length of 'xmat'.}
 }
 \description{
 This functions visualizes the steps of the optimization in a 3 dimensional contour plot.

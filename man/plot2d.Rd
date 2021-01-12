@@ -18,7 +18,7 @@ plot2d(
 )
 }
 \arguments{
-\item{f}{a (multi-) dimensional function to be eptimized.}
+\item{f}{a (multi-) dimensional function to be optimized.}
 
 \item{x1.lower}{the lower boundary for the range of the x1 coordinate displayed.}
 
