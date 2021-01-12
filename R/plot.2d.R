@@ -25,7 +25,7 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
   # Check several input parameter
   if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
   if (checkList(algoName) == FALSE) stop("'algoName' must be a list object")
-  if (!is.null(trueOpt) & !is.numeric(trueOpt)) stop("provided true optimum must be a numeric vector")
+  # if (!is.null(trueOpt) & !is.numeric(trueOpt)) stop("provided true optimum must be a numeric vector")
   if(optimError == TRUE) stop("Error in plot2d: error occured in optimization. Please specify different set of parameters.")
   if (length(xmat) > length(algoName) && !is.null(algoName)) {
     print("unsufficient names provides: outstanding instances autofilled")
@@ -69,6 +69,10 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
   plot.2d = plot_ly(opacity = 0.75) %>%
     add_contour(x = x1, y = x2, z = z, showlegend =F)
+  if(!is.null(trueOpt)){
+    plot.2d <- plot.2d  %>%
+    add_markers(x = trueOpt[1], y = trueOpt[2], marker = list(size = 10, symbol = "star", color = "black"), name = "Optimum")
+  }
 
   for(i in 1:length(xmat)){
     plot.2d <- plot.2d %>% add_trace(data = data.frame(xmat[[i]]), type = "scatter", x = ~x1, y = ~x2,

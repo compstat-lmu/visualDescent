@@ -8,6 +8,7 @@
 #' @import checkmate
 #' @import ggplot2
 #' @import ggnewscale
+#' @import colorRamps
 #'
 #' @param f a (multi-) dimensional function to be optimized.
 #' @param x1.lower the lower boundary for the range of the x1 coordinate displayed.
@@ -52,7 +53,7 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
 
 
   nresults = length(xmat)
-  col = c("black", "red", "blue", "green")
+  col = colorRamps::matlab.like2(nresults)
   col = col[1:nresults]
   niter = lapply(xmat, function(x) seq(1, nrow(x), by = 1))
 
@@ -63,8 +64,9 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
 
   plot.df = do.call(rbind, plot.df)
 
-  plot = ggplot(plot.df, aes(x = iter, y = loss, color = algo)) +
-    geom_path() +
+  plot.loss = ggplot(plot.df, aes(x = iter, y = loss, color = algo)) +
+    geom_path(size = 1.3) +
+    scale_color_manual(values = col) +
     ggtitle("Objective value") +#("Loss to optimum") +
     xlab("Iteration") +
     ylab("Loss") +
@@ -72,6 +74,6 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
     theme(plot.title = element_text(hjust = .5))
   #theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 
-  return(plot)
+  return(plot.loss)
 
 }

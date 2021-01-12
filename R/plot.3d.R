@@ -16,11 +16,11 @@
 #' @param n.x the number (equidistant) points at which f is evaluated w.r.t x1 and x2 coordinate.
 #' @param xmat an object of class list containing the results of the algorithm.
 #' @param trueOpt is a numeric vector of the true optimum of the function.
-#' @param algoNamw list of strings with names of algorithms. Length must equal length of 'xmat'.
+#' @param algoName list of strings with names of algorithms. Length must equal length of 'xmat'.
 #'
 #' @export
 plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, trueOpt = NULL, algoName = NULL,
-  optimError = FALSE) {
+  optimError = FALSE){#, trace
 
   # Check several input parameter
   if (checkList(xmat) == FALSE) stop("'xmat' must be a list object")
@@ -43,12 +43,7 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
   # Modify 'xmat' to match 3rd coordinate (set to 0) and identify number of procedures to be plotted
   nresults = length(xmat)
-  # col = c("black", "red", "blue", "green")
-  # col = col[1:nresults]
-  #col = gray.colors(nresults)
-  # col = heat.colors(nresults)
-  col = colorRamps::matlab.like2(nresults)
-  # col = jcolors::jcolors("pal10")
+  col = colorRamps::matlab.like2(nresults)# ifelse(nresults == 1, "red", colorRamps::matlab.like2(nresults))
   symb = c("circle", "square", "diamond", "triangle-up", "triangle-down", "triangle-left", "triangle-right", "cross", "x",
     "diamod-tall", "diamond-wide")
 
@@ -57,9 +52,6 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
   plot.points.df = data.frame(mapply(function(u, v, w) cbind.data.frame(u, data.frame(name = v, col = w, stringsAsFactors = FALSE)),
     u = xmat, v = algoName, w = col)[[1]])
-
-  # plot.points.z = lapply(xmat, function(x) matrix(apply(expand.grid(x$x1, x$x2), 1, f), ncol = length(x$x1)))
-
 
   plot.points = mapply(function(x, y, z) data.frame(x, algo = y, col = z, stringsAsFactors = FALSE), x = xmat, y = algoName,
     z = col, SIMPLIFY = FALSE)
@@ -72,7 +64,7 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
 
   plot.3d = plot_ly(opacity = 0.75) %>%
-    add_surface(x = x1, y = x2, z = z, #colorscale = list(c(0,1), c("lightgrey", "lightblue")),
+    add_surface(x = x1, y = x2, z = z,
       contours = list(
         z = list(
           show=TRUE,
@@ -80,35 +72,21 @@ plot3d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
           highlightcolor="#ff0000",
           project=list(z=TRUE)
         )
-      ), showlegend = FALSE) #%>%
-  # add_annotations(text = "", xref="paper", yref="paper", x=1.05, xanchor="left",
-  #   y=1, yanchor="bottom", legendtitle=FALSE, showarrow=FALSE) %>%
-  # layout(legend = TRUE)
+      ), showscale = FALSE)
 
-  # layout(
-  #   title = plot.title,
-  #   scene = list(
-  #     xaxis = list(title = "x1"),
-  #     yaxis = list(title = "x2"),
-  #     zaxis = list(title = "y"),
-  #     color = c("grey")
-  #   )) %>%
-  #
   for(i in 1:length(xmat)){
     plot.3d <- plot.3d %>% add_trace(data = data.frame(xmat[[i]]), type = "scatter3d", x = ~x1, y = ~x2, z = ~y,
-      mode = "markers", marker = list(symbol = symb[i], size = 4, color = gray.colors(1, alpha = 0.75), #color = col[i]),
+      mode = "markers", marker = list(symbol = symb[i], size = 4, color = gray.colors(1, alpha = 0.75),
         line = list(
         color = col[i],
         width = 2)),
-      name = paste(names(xmat)[i]))#, showlegend = FALSE
+      name = paste(names(xmat)[i]))
   }
 
-  #
-  # add_trace(data = plot.points, type = "scatter3d", x = ~x2, y = ~x1, z = ~y,
-  #   mode = "markers", symbol = ~algo, marker = list(size = 5)) %>%
-  #
-  # add_trace(data = plot.points, type = "scatter3d", x = ~x2, y = ~x1, z = ~y,
-  #   mode = "markers", symbol = ~algo, marker = list(size = 5)) %>%
-
   return(plot.3d)
+
+  # l <- list()
+  # l[["plot"]] <- plot.3d
+  # l[["xmat"]] <- xmat
+  # return(l)
 }
