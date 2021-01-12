@@ -312,12 +312,11 @@ server <- function(input, output, session){
 
   observe({
 
-    req(input$fun, input$method, input$step.size, input$max.iter, input$phi, input$phi1, input$phi2)
+    req(input$fun, input$method, input$max.iter, input$phi, input$phi1, input$phi2)
 
     Reactives$plot = isolate(get(input$fun, funData))
     Reactives$fun = input$fun
     Reactives$method = input$method
-    Reactives$step.size = input$step.size
     Reactives$max.iter = input$max.iter
     Reactives$phi = input$phi
     Reactives$phi1 = input$phi1
@@ -326,6 +325,12 @@ server <- function(input, output, session){
     Reactives$x2 = as.numeric(input$startx2)
 
   })
+
+  observe({
+    req(input$step.size)
+    Reactives$step.size = input$step.size
+  })
+
 
   # observeEvent(input$run, {
   #   if(input$run == 0){
@@ -347,27 +352,47 @@ server <- function(input, output, session){
       }
     )})
 
-    output$x1coords = renderUI({ sliderInput("startx1", HTML("Choose Start Point x<sub>1</sub>"),
-      min = get(Reactives$fun, xValues)[1],
-      max = get(Reactives$fun, xValues)[3],
-      step = 0.01,
-      value = if (is.null(input$startx1)) {
-        get(Reactives$fun, xValues)[1]
-      } else {
-        Reactives$x1
-      }
-    )})
+    startcoords = reactive({
+      req(input$fun)
+      fn = input$fun
+      f = funData[[fn]]
+      r1 = getUpperBoxConstraints(f)[1] - getLowerBoxConstraints(f)[1]
+      r2 = getUpperBoxConstraints(f)[2] - getLowerBoxConstraints(f)[2]
+      c(round(r1, 2), round(getLowerBoxConstraints(f)[1] + 0.1 * r1, 2),
+        round(r2, 2), round(getLowerBoxConstraints(f)[2] + 0.1 * r2, 2))
+    })
 
-    output$x2coords = renderUI({ sliderInput("startx2", HTML("Choose Start Point x<sub>2</sub>"),
-      min = get(Reactives$fun, xValues)[2],
-      max = get(Reactives$fun, xValues)[4],
-      step = 0.01,
-      value = if (is.null(input$startx2)) {
-        get(Reactives$fun, xValues)[2]
-      } else {
-        Reactives$x2
-      }
-    )})
+    output$x1coords = renderUI({
+      req(Reactives$fun)
+      s = startcoords()
+      sliderInput("startx1", HTML("Choose Start Point x<sub>1</sub>"),
+        min = get(Reactives$fun, xValues)[1],
+        max = get(Reactives$fun, xValues)[3],
+        step = 0.01 * s[1],
+        value = if (is.null(input$startx1)) {
+          s[2]
+          #get(Reactives$fun, xValues)[1]
+        } else {
+          Reactives$x1
+        }
+      )
+    })
+
+    output$x2coords = renderUI({
+      req(Reactives$fun)
+      s = startcoords()
+      sliderInput("startx2", HTML("Choose Start Point x<sub>2</sub>"),
+        min = get(Reactives$fun, xValues)[2],
+        max = get(Reactives$fun, xValues)[4],
+        step = 0.01 * s[3],
+        value = if (is.null(input$startx2)) {
+          s[4]
+          # get(Reactives$fun, xValues)[2]
+        } else {
+          Reactives$x2
+        }
+      )
+    })
 
     output$method = renderUI({checkboxGroupInput("method", "Choose Optimizer(s)",
       choices = c("GradientDescent", "Momentum", "AdaGrad", "Adam", "RMS", # "NAG", "AdaDelta" something wrong in code?
@@ -379,12 +404,25 @@ server <- function(input, output, session){
       }
     )})
 
-    output$step.size = renderUI({sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
-      min = 0, max = 0.5, step = 0.001,
+    stepsize = reactive({
+      req(input$fun)
+      fn = input$fun
+      f = funData[[fn]]
+      r1 = getUpperBoxConstraints(f)[1] - getLowerBoxConstraints(f)[1]
+      r2 = getUpperBoxConstraints(f)[2] - getLowerBoxConstraints(f)[2]
+      c(0.001 * min(r1, r2), 0.05 * min(r1, r2))
+    })
+
+    output$step.size = renderUI({
+      s = stepsize()
+      min_step = s[1]
+      max_step = s[2]
+      sliderInput("step.size", HTML("Step size &alpha; (all optimizers):"),
+      min = round(min_step, 3), max = round(max_step, 3), step = round(0.01 * (max_step - min_step), 3),
       value =  if (is.null(input$step.size)) {
-        0.01
+        min_step
       } else {
-        Reactives$step.size
+        input$step.size
       }
     )})
 
@@ -435,7 +473,7 @@ server <- function(input, output, session){
     #   }
     # )})
   })
-
+0
 
   observeEvent(input$run, {
     plot = isolate(get(input$fun, funData))

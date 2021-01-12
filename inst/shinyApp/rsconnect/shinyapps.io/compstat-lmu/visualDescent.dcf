@@ -1,0 +1,13 @@
+name: visualDescent
+title: visualDescent
+username:
+account: compstat-lmu
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 3466242
+bundleId: 4087904
+url: https://compstat-lmu.shinyapps.io/visualDescent/
+when: 1610481595.78243
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: prerequisites.R
