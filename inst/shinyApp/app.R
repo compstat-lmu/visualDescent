@@ -1,8 +1,4 @@
-#setwd("/home/tessi/Arbeit/visualDescent/inst/shinyApp")
-require(shiny)
-require(shinydashboard)
-require(shinyjs)
-require(shinybusy)
+library(shiny)
 library(visualDescent)
 
 # Define default settings
