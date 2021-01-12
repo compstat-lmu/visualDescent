@@ -43,11 +43,7 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
 
   # Modify 'xmat' to match 3rd coordinate (set to 0) and identify number of procedures to be plotted
   nresults = length(xmat)
-  # col = c("black", "red", "blue", "green")
-  # col = col[1:nresults]
-  # col = heat.colors(nresults)
   col = colorRamps::matlab.like2(nresults)
-  # col = jcolors::jcolors("pal10")
   symb = c("circle", "square", "diamond", "triangle-up", "triangle-down", "triangle-left", "triangle-right", "cross", "x",
     "diamod-tall", "diamond-wide")
 
@@ -78,10 +74,9 @@ plot2d = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 100L, xmat, t
     plot.2d <- plot.2d %>% add_trace(data = data.frame(xmat[[i]]), type = "scatter", x = ~x1, y = ~x2,
       mode = "markers", marker = list(symbol = symb[i], size = 8, color = gray.colors(1, alpha = 0.75),
         line = list(
-        #color = 'rgb(220, 220, 220)',
           color = col[i],
           width = 2)),
-      name = paste(names(xmat)[i]))#, showlegend = FALSE
+      name = paste(names(xmat)[i])
   }
 
   return(plot.2d)

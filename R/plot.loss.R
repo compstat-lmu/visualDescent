@@ -67,7 +67,7 @@ plotLoss = function(f, x1.lower, x1.upper, x2.lower, x2.upper, xmat, trueOptZ = 
   plot.loss = ggplot(plot.df, aes(x = iter, y = loss, color = algo)) +
     geom_path(size = 1.3) +
     scale_color_manual(values = col) +
-    ggtitle("Objective value") +#("Loss to optimum") +
+    ggtitle("Objective value") +
     xlab("Iteration") +
     ylab("Loss") +
     theme(legend.title = element_blank()) +

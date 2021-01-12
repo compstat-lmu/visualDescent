@@ -44,13 +44,6 @@ plot2d_info = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xma
   if (missing(x1.upper)) x1.upper = getUpperBoxConstraints(f)[1]
   if (missing(x2.upper)) x2.upper = getUpperBoxConstraints(f)[2]
 
-  # Modify 'xmat' to match 3rd coordinate (set to 0) and identify number of procedures to be plotted
-  # nresults = length(xmat)
-  # xmat$y = 0
-  # xmat = as.list(xmat)
-  # col = c("black", "red", "blue", "green")
-  # col = col[1:nresults]
-
   if (!is.null(trueOpt)) plot.dfOpt = data.frame(x1 = trueOpt[1], x2 = trueOpt[2])
 
   # Generate grid with specified dimensions and data.frame for plot
@@ -65,23 +58,11 @@ plot2d_info = function(f, x1.lower, x1.upper, x2.lower, x2.upper, n.x = 30L, xma
 
   names(plot.df) = c("x1", "x2", "y")
 
-  # plot.points.df = mapply(function(u, v, w) cbind.data.frame(u, data.frame(name = v, col = w, stringsAsFactors = FALSE)),
-  #                         u = xmat[-(nresults+1)], v = algoName, w = col, SIMPLIFY = F)
-  #
-  # plot.points.df = do.call(rbind, plot.points.df)
-
-  # Generate contour plot and add steps of descent procedure as points
   plot = ggplot(plot.df, aes(x1, x2)) +
     stat_contour(bins = n.x, aes(z = y, color = stat(level))) +
     ggtitle(paste(plot.title)) +
     new_scale_color() +
-    # geom_point(data = plot.points.df, aes(x = x1, y = x2, color = name),
-    #            alpha = .5) +
-    # geom_path(data = plot.points.df, aes(x = x1, y = x2, color = name)) +
-    # scale_fill_manual(name = "Test", values = plot.points.df$col) +    # geom_path(data = plot.points.df, aes(x = x1, y = x2, col = name)) +
     xlab("x1") + ylab("x2") +
-    # guides(colour = guide_legend(override.aes = list(color = c("black", "blue", "green", "grey")))) +
-    # scale_colour_manual(breaks = plot.points.df$name, values = unique(plot.points.df$col)) +
     theme(plot.title = element_text(hjust = .5)) +
     theme(panel.background = element_rect(fill = 'white', colour = 'black'))
 
