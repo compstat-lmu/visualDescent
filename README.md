@@ -4,7 +4,7 @@ Visualization of different descent methods including GD, momentum method, AdaGra
 # Visualization via Shiny App
 Under the following link you can find a demo of the optimization algorithms with pre-defined optimization functions. All important parameters of the optimization can be controlled and updated in realtime.
 
-[R Shiny App](https://philippscheller.shinyapps.io/shinyapp/)
+[R Shiny App](https://compstat-lmu.shinyapps.io/visualDescent/)
 
 As an alternative you can deploy the app on your local machine via the following function. Uncommented lines refer to packages that may be necessary to load beforehand. 
 
